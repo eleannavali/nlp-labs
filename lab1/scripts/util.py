@@ -38,28 +38,40 @@ def create_symbols():
         letters[letter] = i+1
     dict_to_txt('../vocab/chars.syms', letters)
 
-def create_transducer():
+def create_transducer(wins, wdel, wsub, name):
     ''' Create a txt description of transducer:
             ex. 0 0 a a 0
                  0 0 a b 1
     '''
-    with open('../fsts/L.fst', 'w') as f:
+    with open('../fsts/'+name+'.fst', 'w') as f:
         CHARS.append('<eps>')
         for let in CHARS : 
             for let_i in CHARS : 
-                if let == let_i : weight = 0 
-                else : weight =1 
-                f.write("0 0 " + let + " " + let_i + " " + str(weight) + "\n")
+                if let == let_i : 
+                    f.write("0 0 " + let + " " + let_i + " " + str(0) + "\n")
+                else:
+                    if let=='<eps>':
+                        f.write("0 0 " + let + " " + let_i + " " + str(wins) + "\n")
+                    elif let_i=='<eps>':
+                        f.write("0 0 " + let + " " + let_i + " " + str(wdel) + "\n")
+                    else:
+                        f.write("0 0 " + let + " " + let_i + " " + str(wsub) + "\n")
         f.write(str(0))
 
-def create_sub_transducer():
-    with open('../fsts/sub_L.fst', 'w') as f:
+def create_sub_transducer(wins, wdel, wsub, name):
+    with open('../fsts/'+name+'.fst', 'w') as f:
         CHARS.append('<eps>')
         for let in CHARS : 
             for let_i in CHARS : 
-                if let == let_i : weight = 0 
-                else : weight =1 
-                f.write("0 0 " + let + " " + let_i + " " + str(weight) + "\n") 
+                if let == let_i : 
+                    f.write("0 0 " + let + " " + let_i + " " + str(0) + "\n")
+                else:
+                    if let=='<eps>':
+                        f.write("0 0 " + let + " " + let_i + " " + str(wins) + "\n")
+                    elif let_i=='<eps>':
+                        f.write("0 0 " + let + " " + let_i + " " + str(wdel) + "\n")
+                    else:
+                        f.write("0 0 " + let + " " + let_i + " " + str(wsub) + "\n") 
             break
         f.write(str(0))
 

@@ -3,13 +3,14 @@
 # Run spell corrector for an input word
 
 # Usage:
-#   bash scripts/predict.sh MY_SPELL_CHECKER tst
+#   bash scripts/predict.sh MY_SPELL_CHECKER tst NAME_SPELL_CHECKER
 # Output:
 #   test
 
 # Command line args
 SPELL_CHECKER_COMPILED=${1}
 WORD=${2}
+TEXT_NAME=${3}
 
 ###
 # Make sure these files exist
@@ -35,4 +36,4 @@ python mkfstinput.py ${WORD} |
     # Ignore accepting state line
     head -n -1 |
     # Remove trailing new line
-    tr -d '\n'
+    tr -d '\n'  > ../outputs/${TEXT_NAME}_${WORD}.txt 

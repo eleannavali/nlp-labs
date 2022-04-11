@@ -1,11 +1,12 @@
-# create transducer
+# create transducers
 fstcompile --isymbols=../vocab/chars.syms --osymbols=../vocab/chars.syms ../fsts/L.fst ../fsts/L.binfst
+fstcompile --isymbols=../vocab/chars.syms --osymbols=../vocab/chars.syms ../fsts/L_weighted.fst ../fsts/L_weighted.binfst
 # sub transducer
 fstcompile --isymbols=../vocab/chars.syms --osymbols=../vocab/chars.syms ../fsts/sub_L.fst ../fsts/sub_L.binfst
-
+fstcompile --isymbols=../vocab/chars.syms --osymbols=../vocab/chars.syms ../fsts/sub_L_weighted.fst ../fsts/sub_L_weighted.binfst
 # draw graph
 fstdraw --isymbols=../vocab/chars.syms --osymbols=../vocab/chars.syms ../fsts/sub_L.binfst | dot -Tpng > ../img/sub_L.png
-
+fstdraw --isymbols=../vocab/chars.syms --osymbols=../vocab/chars.syms ../fsts/sub_L_weighted.binfst | dot -Tpng > ../img/sub_L_weighted.png
 # create acceptor 
 cat ../vocab/words.syms | python3 makelex.py > ../fsts/V.fst
 fstcompile --isymbols=../vocab/chars.syms --osymbols=../vocab/words.syms ../fsts/V.fst ../fsts/V.binfst
@@ -31,3 +32,4 @@ fstarcsort ../fsts/V_opt.binfst ../fsts/V_opt_sorted.binfst
 
 #create S spell checker
 fstcompose ../fsts/L.binfst ../fsts/V_opt_sorted.binfst ../fsts/S.binfst
+fstcompose ../fsts/L_weighted.binfst ../fsts/V_opt_sorted.binfst ../fsts/S_weighted.binfst

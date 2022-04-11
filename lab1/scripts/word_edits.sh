@@ -13,16 +13,16 @@ CORRECT=${2}
 
 
 # Constants.
-CURRENT_DIRECTORY=$(dirname $0)
+# CURRENT_DIRECTORY=$(dirname $0)
 
 ###
 # Make sure to create these files
-CHARSSYMS=${CURRENT_DIRECTORY}/../syms/chars.syms  # Character symbol table
-VANILLA_LEVENSHTEIN=${CURRENT_DIRECTORY}/../fsts/L.binfst  # Compile basic Levenshtein FST
+CHARSSYMS=../vocab/chars.syms  # Character symbol table
+VANILLA_LEVENSHTEIN=../fsts/L.binfst  # Compile basic Levenshtein FST
 ###
 
 # Temp fst file. Is deleted after the script runs
-MLFST=${CURRENT_DIRECTORY}/../fsts/ML.binfst
+MLFST=../fsts/ML.binfst
 
 
 # Compose M with L to create  ML.fst

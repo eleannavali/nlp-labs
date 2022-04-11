@@ -1,4 +1,5 @@
 import string
+from math import log
 
 EPS = "<eps>"  # Define once. Use the same EPS everywhere
 
@@ -57,6 +58,30 @@ def create_transducer(wins, wdel, wsub, name):
                     else:
                         f.write("0 0 " + let + " " + let_i + " " + str(wsub) + "\n")
         f.write(str(0))
+
+def create_weighted_transducer():
+    ''' Create a txt description of transducer:
+            ex. 0 0 a a 0
+                 0 0 a b 1
+    '''
+    with open('../outputs/edit_relative_frequency.txt', 'r') as fd:
+        lines = [ln.strip().split("\t") for ln in fd.readlines()]
+        edits_dict ={}
+        for ln in lines:
+            edits_dict[ln[0]] = float(ln[1])
+
+        with open('../fsts/E.fst', 'w') as f:
+            CHARS.append('<eps>')
+            for let in CHARS : 
+                for let_i in CHARS : 
+                    if let == let_i : 
+                        f.write("0 0 " + let + " " + let_i + " " + str(0) + "\n")
+                    else:
+                        if let + ' ' + let_i in edits_dict.keys():
+                            f.write("0 0 " + let + " " + let_i + " " + str(-log(edits_dict[let + ' ' + let_i])) + "\n")
+                        else:
+                            f.write("0 0 " + let + " " + let_i + " " + str(-log(0.00001)) + "\n")
+            f.write(str(0))
 
 def create_sub_transducer(wins, wdel, wsub, name):
     with open('../fsts/'+name+'.fst', 'w') as f:

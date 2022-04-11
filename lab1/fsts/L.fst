@@ -24,6 +24,7 @@
 0 0 a x 1
 0 0 a y 1
 0 0 a z 1
+0 0 a <eps> 1
 0 0 b a 1
 0 0 b b 0
 0 0 b c 1
@@ -50,6 +51,7 @@
 0 0 b x 1
 0 0 b y 1
 0 0 b z 1
+0 0 b <eps> 1
 0 0 c a 1
 0 0 c b 1
 0 0 c c 0
@@ -76,6 +78,7 @@
 0 0 c x 1
 0 0 c y 1
 0 0 c z 1
+0 0 c <eps> 1
 0 0 d a 1
 0 0 d b 1
 0 0 d c 1
@@ -102,6 +105,7 @@
 0 0 d x 1
 0 0 d y 1
 0 0 d z 1
+0 0 d <eps> 1
 0 0 e a 1
 0 0 e b 1
 0 0 e c 1
@@ -128,6 +132,7 @@
 0 0 e x 1
 0 0 e y 1
 0 0 e z 1
+0 0 e <eps> 1
 0 0 f a 1
 0 0 f b 1
 0 0 f c 1
@@ -154,6 +159,7 @@
 0 0 f x 1
 0 0 f y 1
 0 0 f z 1
+0 0 f <eps> 1
 0 0 g a 1
 0 0 g b 1
 0 0 g c 1
@@ -180,6 +186,7 @@
 0 0 g x 1
 0 0 g y 1
 0 0 g z 1
+0 0 g <eps> 1
 0 0 h a 1
 0 0 h b 1
 0 0 h c 1
@@ -206,6 +213,7 @@
 0 0 h x 1
 0 0 h y 1
 0 0 h z 1
+0 0 h <eps> 1
 0 0 i a 1
 0 0 i b 1
 0 0 i c 1
@@ -232,6 +240,7 @@
 0 0 i x 1
 0 0 i y 1
 0 0 i z 1
+0 0 i <eps> 1
 0 0 j a 1
 0 0 j b 1
 0 0 j c 1
@@ -258,6 +267,7 @@
 0 0 j x 1
 0 0 j y 1
 0 0 j z 1
+0 0 j <eps> 1
 0 0 k a 1
 0 0 k b 1
 0 0 k c 1
@@ -284,6 +294,7 @@
 0 0 k x 1
 0 0 k y 1
 0 0 k z 1
+0 0 k <eps> 1
 0 0 l a 1
 0 0 l b 1
 0 0 l c 1
@@ -310,6 +321,7 @@
 0 0 l x 1
 0 0 l y 1
 0 0 l z 1
+0 0 l <eps> 1
 0 0 m a 1
 0 0 m b 1
 0 0 m c 1
@@ -336,6 +348,7 @@
 0 0 m x 1
 0 0 m y 1
 0 0 m z 1
+0 0 m <eps> 1
 0 0 n a 1
 0 0 n b 1
 0 0 n c 1
@@ -362,6 +375,7 @@
 0 0 n x 1
 0 0 n y 1
 0 0 n z 1
+0 0 n <eps> 1
 0 0 o a 1
 0 0 o b 1
 0 0 o c 1
@@ -388,6 +402,7 @@
 0 0 o x 1
 0 0 o y 1
 0 0 o z 1
+0 0 o <eps> 1
 0 0 p a 1
 0 0 p b 1
 0 0 p c 1
@@ -414,6 +429,7 @@
 0 0 p x 1
 0 0 p y 1
 0 0 p z 1
+0 0 p <eps> 1
 0 0 q a 1
 0 0 q b 1
 0 0 q c 1
@@ -440,6 +456,7 @@
 0 0 q x 1
 0 0 q y 1
 0 0 q z 1
+0 0 q <eps> 1
 0 0 r a 1
 0 0 r b 1
 0 0 r c 1
@@ -466,6 +483,7 @@
 0 0 r x 1
 0 0 r y 1
 0 0 r z 1
+0 0 r <eps> 1
 0 0 s a 1
 0 0 s b 1
 0 0 s c 1
@@ -492,6 +510,7 @@
 0 0 s x 1
 0 0 s y 1
 0 0 s z 1
+0 0 s <eps> 1
 0 0 t a 1
 0 0 t b 1
 0 0 t c 1
@@ -518,6 +537,7 @@
 0 0 t x 1
 0 0 t y 1
 0 0 t z 1
+0 0 t <eps> 1
 0 0 u a 1
 0 0 u b 1
 0 0 u c 1
@@ -544,6 +564,7 @@
 0 0 u x 1
 0 0 u y 1
 0 0 u z 1
+0 0 u <eps> 1
 0 0 v a 1
 0 0 v b 1
 0 0 v c 1
@@ -570,6 +591,7 @@
 0 0 v x 1
 0 0 v y 1
 0 0 v z 1
+0 0 v <eps> 1
 0 0 w a 1
 0 0 w b 1
 0 0 w c 1
@@ -596,6 +618,7 @@
 0 0 w x 1
 0 0 w y 1
 0 0 w z 1
+0 0 w <eps> 1
 0 0 x a 1
 0 0 x b 1
 0 0 x c 1
@@ -622,6 +645,7 @@
 0 0 x x 0
 0 0 x y 1
 0 0 x z 1
+0 0 x <eps> 1
 0 0 y a 1
 0 0 y b 1
 0 0 y c 1
@@ -648,6 +672,7 @@
 0 0 y x 1
 0 0 y y 0
 0 0 y z 1
+0 0 y <eps> 1
 0 0 z a 1
 0 0 z b 1
 0 0 z c 1
@@ -674,3 +699,32 @@
 0 0 z x 1
 0 0 z y 1
 0 0 z z 0
+0 0 z <eps> 1
+0 0 <eps> a 1
+0 0 <eps> b 1
+0 0 <eps> c 1
+0 0 <eps> d 1
+0 0 <eps> e 1
+0 0 <eps> f 1
+0 0 <eps> g 1
+0 0 <eps> h 1
+0 0 <eps> i 1
+0 0 <eps> j 1
+0 0 <eps> k 1
+0 0 <eps> l 1
+0 0 <eps> m 1
+0 0 <eps> n 1
+0 0 <eps> o 1
+0 0 <eps> p 1
+0 0 <eps> q 1
+0 0 <eps> r 1
+0 0 <eps> s 1
+0 0 <eps> t 1
+0 0 <eps> u 1
+0 0 <eps> v 1
+0 0 <eps> w 1
+0 0 <eps> x 1
+0 0 <eps> y 1
+0 0 <eps> z 1
+0 0 <eps> <eps> 0
+0

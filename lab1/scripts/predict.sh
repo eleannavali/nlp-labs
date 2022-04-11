@@ -27,7 +27,7 @@ python mkfstinput.py ${WORD} |
     fstrmepsilon |
     fsttopsort |
     # print output fst using words.syms
-    fstprint -osymbols=${WORDSYMS} |
+    fstprint -isymbols=${CHARSYMS} -osymbols=${WORDSYMS} |
     # Get destination word (corrected)
     cut -f4 |
     # Ignore epsilon outputs

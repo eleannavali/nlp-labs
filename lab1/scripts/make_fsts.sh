@@ -25,8 +25,9 @@ fstrmepsilon ../fsts/sub_V.binfst| fstdeterminize | fstminimize >../fsts/sub_V_o
 fstdraw --isymbols=../vocab/chars.syms --osymbols=../vocab/words.syms ../fsts/sub_V_opt.binfst | dot -Tpng > ../img/sub_V_opt.png
 
 # sort L and V fst inputs
-fstarcsort --sort_type=olabel ../fsts/L.binfst ../fsts/L.binfst
-fstarcsort --sort_type=ilabel ../fsts/V_opt.binfst ../fsts/V_opt.binfst
+# fstarcsort --sort_type=olabel ../fsts/L.binfst ../fsts/L_sorted.binfst
+# fstarcsort --sort_type=ilabel ../fsts/V_opt.binfst ../fsts/V_opt_sorted.binfst
+fstarcsort ../fsts/V_opt.binfst ../fsts/V_opt_sorted.binfst
 
 #create S spell checker
-fstcompose ../fsts/L.binfst ../fsts/V_opt.binfst ../fsts/S.binfst
+fstcompose ../fsts/L.binfst ../fsts/V_opt_sorted.binfst ../fsts/S.binfst

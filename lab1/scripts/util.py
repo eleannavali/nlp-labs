@@ -34,8 +34,8 @@ def create_words(path="../vocab/words.vocab.txt"):
 def create_symbols():
     letters = {}
     letters[EPS] = 0 
-    for letter in CHARS : 
-        letters[letter] = ord(letter)
+    for i,letter in enumerate(CHARS) : 
+        letters[letter] = i+1
     dict_to_txt('../vocab/chars.syms', letters)
 
 def create_transducer():
@@ -44,20 +44,24 @@ def create_transducer():
                  0 0 a b 1
     '''
     with open('../fsts/L.fst', 'w') as f:
+        CHARS.append('<eps>')
         for let in CHARS : 
             for let_i in CHARS : 
                 if let == let_i : weight = 0 
                 else : weight =1 
                 f.write("0 0 " + let + " " + let_i + " " + str(weight) + "\n")
+        f.write(str(0))
 
 def create_sub_transducer():
     with open('../fsts/sub_L.fst', 'w') as f:
+        CHARS.append('<eps>')
         for let in CHARS : 
             for let_i in CHARS : 
                 if let == let_i : weight = 0 
                 else : weight =1 
                 f.write("0 0 " + let + " " + let_i + " " + str(weight) + "\n") 
             break
+        f.write(str(0))
 
 
 def calculate_arc_weight(frequency):

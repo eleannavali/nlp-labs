@@ -8,7 +8,7 @@ OR:
 
 import sys
 
-from util import EPS, format_arc, create_symbols, create_words, create_transducer, create_sub_transducer
+from util import EPS, format_arc
 
 
 def make_input_fst(word):
@@ -33,8 +33,4 @@ def make_input_fst(word):
 
 if __name__ == "__main__":
     word = sys.argv[1]
-    # create_symbols()
-    # create_words()
-    # create_transducer()
-    # create_sub_transducer()
     make_input_fst(word)

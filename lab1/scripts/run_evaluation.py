@@ -6,6 +6,12 @@ from tqdm import tqdm
 
 from helpers import run_cmd
 
+'''
+    Usage:
+        python3 run_evaluation.py COMPILED_SPELLER
+        ex.python3 run_evaluation.py ../fsts/EVW.binfst
+'''
+
 # points to slp-labs/lab1/scripts
 SCRIPT_DIRECTORY = os.path.realpath(__file__)
 
@@ -26,16 +32,15 @@ def read_test_set(fname):
 
 def correct_word(word, corrector):
     corrected = run_cmd(f"bash predict.sh {corrector} {word}")
-
     return corrected.strip()
 
 
 def run_spell_checker(pairs, corrector):
     hits = 0
-
+    
     for wrong, correct in tqdm(pairs):
         corrected = correct_word(wrong, corrector)
-        # tqdm.write(f"{wrong} -> {corrected}: {correct}")
+        tqdm.write(f"{wrong} -> {corrected}: {correct}")
         if corrected == correct:
             hits += 1
     print("Accuracy: {}".format(hits / len(pairs)))

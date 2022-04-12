@@ -62,7 +62,7 @@ def create_transducer(wins, wdel, wsub, name):
 def create_weighted_transducer():
     ''' Create a txt description of transducer:
             ex. 0 0 a a 0
-                 0 0 a b 1
+                 0 0 a b -log(freq/N)
     '''
     with open('../outputs/edit_relative_frequency.txt', 'r') as fd:
         lines = [ln.strip().split("\t") for ln in fd.readlines()]
@@ -81,6 +81,51 @@ def create_weighted_transducer():
                             f.write("0 0 " + let + " " + let_i + " " + str(-log(edits_dict[let + ' ' + let_i])) + "\n")
                         else:
                             f.write("0 0 " + let + " " + let_i + " " + str(-log(0.00001)) + "\n")
+            f.write(str(0))
+
+def create_word_acceptor():
+    ''' Create a txt description of transducer:
+            ex. 0 0 emma emma -log(freq)
+                 0 0 by by -log(freq)
+    '''
+    with open('../vocab/words.vocab.txt', 'r') as fd:
+        lines = [ln.strip().split("\t") for ln in fd.readlines()]
+        freq_dict ={}
+        for ln in lines:
+            freq_dict[ln[0]] = float(ln[1])
+
+        freq_sorted = dict(sorted(freq_dict.items() ,reverse=True, key=lambda kv: kv[1]))
+        N = sum(freq_sorted.values())
+        for key in freq_sorted.keys():
+            freq_sorted[key]= round(freq_sorted[key]/N,6)
+
+        with open('../fsts/W.fst', 'w') as f:
+            for word in freq_sorted:
+                f.write("0 0 " + word + " " + word + " " + str(-log(freq_sorted[word])) + "\n")
+            f.write(str(0))
+
+def create_sub_word_acceptor(cut=10):
+    ''' Create a txt description of transducer:
+            ex. 0 0 emma emma -log(freq)
+                 0 0 by by -log(freq)
+    '''
+    with open('../vocab/words.vocab.txt', 'r') as fd:
+        lines = [ln.strip().split("\t") for ln in fd.readlines()]
+        freq_dict ={}
+        for ln in lines:
+            freq_dict[ln[0]] = float(ln[1])
+
+        N = sum(freq_dict.values())
+        for key in freq_dict.keys():
+            freq_dict[key]= round(freq_dict[key]/N,6)
+
+        with open('../fsts/sub_W.fst', 'w') as f:
+            i=0
+            for word in freq_dict:
+                f.write("0 0 " + word + " " + word + " " + str(-log(freq_dict[word])) + "\n")
+                i+=1
+                if i==cut:
+                    break
             f.write(str(0))
 
 def create_sub_transducer(wins, wdel, wsub, name):

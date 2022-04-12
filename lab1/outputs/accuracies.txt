@@ -1,0 +1,67 @@
+Simple check speller S accuracy: 0.6148148148148148
+--------------------- EV ------------------------------
+contenpted -> contented: contented
+contende -> contend: contented                                                                                
+contended -> contended: contented                                                                             
+contentid -> contented: contented                                                                             
+begining -> beginning: beginning                                                                              
+problam -> problem: problem                                                                                   
+proble -> problem: problem                                                                                    
+promblem -> problem: problem
+proplen -> people: problem                                                                                    
+dirven -> driven: driven 
+exstacy -> ecstacy: ecstasy                                                                                   
+ecstacy -> ecstacy: ecstasy                                                                                   
+guic -> guise: juice                                                                                          
+juce -> juice: juice                                                                                          
+jucie -> juice: juice                                                                                         
+juise -> juice: juice                                                                                         
+juse -> just: juice                                                                                           
+localy -> local: locally                                                                                      
+compair -> compare: compare                                                                                   
+pronounciation -> pronouncing: pronunciation  
+EV check speller accuracy: 0.7185185185185186
+--------------------- EVW --------------------------
+contenpted -> contented: contented                                                                            
+contende -> contend: contented                                                                                
+contended -> contended: contented                                                                             
+contentid -> contented: contented                                                                             
+begining -> beginning: beginning                                                                              
+problam -> problem: problem                                                                                   
+proble -> problem: problem                                                                                    
+promblem -> problem: problem                                                                                  
+proplen -> people: problem                                                                                    
+dirven -> driven: driven  
+exstacy -> exactly: ecstasy                                                                                   
+ecstacy -> ecstacy: ecstasy                                                                                   
+guic -> i: juice                                                                                              
+juce -> juice: juice                                                                                          
+jucie -> juice: juice                                                                                         
+juise -> just: juice                                                                                          
+juse -> just: juice                                                                                           
+localy -> local: locally                                                                                      
+compair -> compare: compare                                                                                   
+pronounciation -> pronouncing: pronunciation 
+EVW check speller accuracy: 0.6888888888888889
+------------------------- LVW ----------------------------------
+contenpted -> the: contented                                                                                  
+contende -> the: contented                                                                                    
+contended -> the: contented                                                                                   
+contentid -> and: contented                                                                                   
+begining -> beginning: beginning                                                                              
+problam -> of: problem                                                                                        
+proble -> the: problem                                                                                        
+promblem -> the: problem                                                                                      
+proplen -> people: problem                                                                                    
+dirven -> the: driven                                                                                         
+exstacy -> the: ecstasy
+ecstacy -> the: ecstasy                                                                                       
+guic -> the: juice                                                                                            
+juce -> the: juice                                                                                            
+jucie -> the: juice                                                                                           
+juise -> the: juice                                                                                           
+juse -> the: juice                                                                                            
+localy -> and: locally                                                                                        
+compair -> and: compare                                                                                       
+pronounciation -> unto: pronunciation 
+LVW check speller accuracy: 0.044444444444444446

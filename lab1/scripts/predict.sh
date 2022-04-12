@@ -36,4 +36,4 @@ python mkfstinput.py ${WORD} |
     # Ignore accepting state line
     head -n -1 |
     # Remove trailing new line
-    tr -d '\n'  > ../outputs/${TEXT_NAME}_${WORD}.txt 
+    tr -d '\n' # > ../outputs/${TEXT_NAME}_${WORD}.txt  # Uncomment to run tests.sh!!

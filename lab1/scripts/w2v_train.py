@@ -70,7 +70,9 @@ def train_w2v_model(
 
 if __name__ == "__main__":
     # read data/gutenberg.txt in the expected format
-    sentences = ...
+    with open('../data/gutenberg.txt', 'r') as fd:
+        lines = [ln.strip().split(" ") for ln in fd.readlines() if len(ln) > 0]
+    sentences = lines
     output_file = "gutenberg_w2v.100d.model"
     window = 5
     embedding_dim = 100

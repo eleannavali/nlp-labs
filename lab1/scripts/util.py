@@ -85,8 +85,8 @@ def create_weighted_transducer():
 
 def create_word_acceptor():
     ''' Create a txt description of transducer:
-            ex. 0 0 emma emma -log(freq)
-                 0 0 by by -log(freq)
+            ex. 0 0 emma emma -log(freq/Ν)
+                 0 0 by by -log(freq/Ν)
     '''
     with open('../vocab/words.vocab.txt', 'r') as fd:
         lines = [ln.strip().split("\t") for ln in fd.readlines()]

@@ -2,6 +2,7 @@ import logging
 import multiprocessing
 import os
 
+
 from gensim.models import Word2Vec
 from gensim.models.callbacks import CallbackAny2Vec
 
@@ -59,7 +60,7 @@ def train_w2v_model(
 
     # TODO: Instantiate gensim.models.Word2Vec class
     model = Word2Vec(sentences=sentences, vector_size=embedding_dim, window=window, 
-                     min_count=min_word_count, workers=workers)
+                     min_count=min_word_count, workers=workers, epochs=epochs)
     # TODO: Build model vocabulary using sentences
     # TODO: Train word2vec model
     #model.train(total_examples=model.corpus_count, epochs=epochs, callbacks=[W2VLossLogger()])
@@ -67,17 +68,19 @@ def train_w2v_model(
     model.save(output_file)
     # model.save(output_file)
 
-    return model
+    return 
+
+
 #os.path.join('..','data','gutenberg.txt', 'r')
 if __name__ == "__main__":
     # read data/gutenberg.txt in the expected format
     with open(r"../data/gutenberg.txt") as fd:
         lines = [ln.strip().split(" ") for ln in fd.readlines() if len(ln) > 0]
     sentences = lines
-    output_file = "../outputs/gutenberg_w2v.100d.model"
-    window = 5
+    output_file = "../outputs/gutenberg_w2v.100d.50win.20epochs.model"
+    window = 50
     embedding_dim = 100
-    epochs = 300
+    epochs = 20
     min_word_count = 10
 
     train_w2v_model(

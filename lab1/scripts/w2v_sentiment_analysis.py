@@ -1,13 +1,13 @@
 import glob
 import os
 import re
-
+from gensim.models import Word2Vec
 import numpy as np
 import sklearn
 
-SCRIPT_DIRECTORY = os.path.realpath(__file__)
+#SCRIPT_DIRECTORY = os.path.realpath(__file__)
 
-data_dir = os.path.join(SCRIPT_DIRECTORY, "../data/aclImdb/")
+data_dir = "../data/aclImdb/"
 train_dir = os.path.join(data_dir, "train")
 test_dir = os.path.join(data_dir, "test")
 pos_train_dir = os.path.join(train_dir, "pos")
@@ -53,9 +53,12 @@ def read_samples(folder, preprocess=lambda x: x):
     for i, sample in enumerate(samples):
         if MAX_NUM_SAMPLES > 0 and i == MAX_NUM_SAMPLES:
             break
-        with open(sample, "r") as fd:
-            x = [preprocess(l) for l in fd][0]
-            data.append(x)
+        try :
+            with open(sample, "r") as fd:
+                x = [preprocess(l) for l in fd][0]
+                data.append(x)
+        except :
+            print("Can't open file  ", sample)
 
     return data
 
@@ -69,8 +72,12 @@ def create_corpus(pos, neg):
     return list(corpus[indices]), list(y[indices])
 
 
-def extract_nbow(corpus):
+def extract_nbow(corpus, model_path='../outputs/gutenberg_w2v.100d.10epochs.model'):
     """Extract neural bag of words representations"""
+    # load w2v model 
+    model = Word2Vec.load(model_path)
+    model_wv = model.wv
+    
     raise NotImplementedError("Implement nbow extractor")
 
 
@@ -85,14 +92,27 @@ def evaluate_sentiment_analysis(classifier, test_corpus, test_labels):
 
 
 if __name__ == "__main__":
+    # read review folders
+    train_pos = read_samples(pos_train_dir) 
+    train_neg = read_samples(neg_train_dir) 
+    test_pos = read_samples(pos_test_dir) 
+    test_neg = read_samples(neg_test_dir) 
+    for t in [train_pos, train_neg, test_pos, test_neg] :
+        print(type(t))
+        print(len(t))
+
+
     # TODO: read Imdb corpus
-    corpus, labels = ...
+    pos = train_pos + test_pos 
+    neg = train_neg + test_neg 
+    corpus, labels = create_corpus(pos, neg)
+
     nbow_corpus = extract_nbow(corpus)
-    (
-        train_corpus,
-        test_corpus,
-        train_labels,
-        test_labels,
-    ) = sklearn.model_selection.train_test_split(corpus, labels)
+    # (
+    #     train_corpus,
+    #     test_corpus,
+    #     train_labels,
+    #     test_labels,
+    # ) = sklearn.model_selection.train_test_split(corpus, labels)
 
     # TODO: train / evaluate and report accuracy

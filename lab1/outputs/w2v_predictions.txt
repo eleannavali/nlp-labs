@@ -19,3 +19,6 @@ gutenberg_w2v.100d.50win.20epochs.model
 gutenberg_w2v.100d.25win.10epochs.model
 {'man woman': 0.59568745, 'man king': 0.25494677, 'man queen': 0.115335084, 'man water': 0.07415403, 'woman king': 0.2159689, 'woman queen': 0.32921454, 'woman water': 0.09726573, 'king queen': 0.49549484, 'king water': 0.026940271, 'queen water': 0.10345606}
 ****************************************************************************************************
+Googlessdd
+{'bible book': 0.43867615, 'bible bank': -0.026416667, 'bible water': 0.003225593, 'book bank': 0.13327888, 'book water': 0.022191014, 'bank water': 0.15576613}
+****************************************************************************************************

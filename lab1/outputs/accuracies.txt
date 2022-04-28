@@ -1,3 +1,23 @@
+contenpted -> contented: contented                                                              
+contende -> contend: contented                                                                  
+contended -> contended: contented                                                               
+contentid -> contented: contented                                                               
+begining -> beginning: beginning                                                                
+problam -> problem: problem                                                                     
+proble -> problem: problem                                                                      
+promblem -> problem: problem                                                                    
+proplen -> prophet: problem                                                                     
+dirven -> dive: driven                                                                          
+exstacy -> ecstacy: ecstasy                                                                     
+ecstacy -> ecstacy: ecstasy                                                                     
+guic -> guil: juice                                                                             
+juce -> june: juice                                                                             
+jucie -> sucke: juice                                                                           
+juise -> juice: juice                                                                           
+juse -> use: juice                                                                              
+localy -> local: locally                                                                        
+compair -> impair: compare                                                                      
+pronounciation -> provocation: pronunciation 
 Simple check speller S accuracy: 0.6148148148148148
 --------------------- EV ------------------------------
 contenpted -> contented: contented
@@ -65,3 +85,26 @@ localy -> and: locally
 compair -> and: compare                                                                                       
 pronounciation -> unto: pronunciation 
 LVW check speller accuracy: 0.044444444444444446
+----------------------------------------------------------
+
+
+contenpted -> contented                                                              
+contende -> contend                                                                  
+contended -> contended                                                                
+contentid -> contented                                                                
+begining -> beginning                                                                 
+problam -> problem                                                                     
+proble -> problem                                                                      
+promblem -> problem                                                                    
+proplen -> prophet                                                                     
+dirven -> dive                                                                          
+exstacy -> ecstacy                                                                     
+ecstacy -> ecstacy                                                                     
+guic -> guil                                                                             
+juce -> june                                                                             
+jucie -> sucke                                                                           
+juise -> juice                                                                           
+juse -> use                                                                              
+localy -> local                                                                        
+compair -> impair                                                                      
+pronounciation -> provocation 

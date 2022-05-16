@@ -1,8 +1,8 @@
 import os
 
 spath='../../kaldi/egs/usc/filesets/'
-dpath='../../kaldi/egs/data/'
-wpath='./kaldi/egs/usc/wav/'
+dpath='../../kaldi/egs/usc/data/'
+wpath='/home/eleanna/Desktop/master/nlp/nlp-labs/kaldi/egs/usc/wav/'
 
 
 open(dpath+'test/wav.scp', 'w').close()

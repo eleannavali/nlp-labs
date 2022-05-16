@@ -2,7 +2,7 @@ import os
 import re
 
 spath='../../kaldi/egs/usc/filesets/'
-dpath='../../kaldi/egs/data/'
+dpath='../../kaldi/egs/usc/data/'
 lexpath='../../kaldi/egs/usc/lexicon.txt'
 
 with open(lexpath,'r') as ft:
@@ -13,15 +13,15 @@ with open(lexpath,'r') as ft:
         phonems[line.split('\t')[0].lower()] = ' '.join(line.split(' ')[1:]).lower()
 
 
-open(dpath+'test/text_phonyms.txt', 'w').close()
-with open(dpath+'test/text.txt','r') as fs:
+open(dpath+'test/text', 'w').close()
+with open(dpath+'test/text_in_english.txt','r') as fs:
     lines = fs.readlines()
     for line in lines :
         line = line.split('\n')[0]
         line = re.sub(r"[^A-Za-z0-9'_ -]", '', line)
         line = re.sub(r"-", ' ', line)
         words = line.split(' ')
-        with open(dpath+'test/text_phonyms.txt','a') as fd:
+        with open(dpath+'test/text','a') as fd:
             fd.write(words[0] + ' sil')
 
             for word in words[1:] : 
@@ -29,15 +29,15 @@ with open(dpath+'test/text.txt','r') as fs:
             fd.write(' sil \n')
 
 
-open(dpath+'train/text_phonyms.txt', 'w').close()
-with open(dpath+'train/text.txt','r') as fs:
+open(dpath+'train/text', 'w').close()
+with open(dpath+'train/text_in_english.txt','r') as fs:
     lines = fs.readlines()
     for line in lines :
         line = line.split('\n')[0]
         line = re.sub(r"[^A-Za-z0-9'_ -]", '', line)
         line = re.sub(r"-", ' ', line)
         words = line.split(' ')
-        with open(dpath+'train/text_phonyms.txt','a') as fd:
+        with open(dpath+'train/text','a') as fd:
             fd.write(words[0] + ' sil')
 
             for word in words[1:] : 
@@ -45,15 +45,15 @@ with open(dpath+'train/text.txt','r') as fs:
             fd.write(' sil \n')
 
 
-open(dpath+'dev/text_phonyms.txt', 'w').close()
-with open(dpath+'dev/text.txt','r') as fs:
+open(dpath+'dev/text', 'w').close()
+with open(dpath+'dev/text_in_english.txt','r') as fs:
     lines = fs.readlines()
     for line in lines :
         line = line.split('\n')[0]
         line = re.sub(r"[^A-Za-z0-9'_ -]", '', line)
         line = re.sub(r"-", ' ', line)
         words = line.split(' ')
-        with open(dpath+'dev/text_phonyms.txt','a') as fd:
+        with open(dpath+'dev/text','a') as fd:
             fd.write(words[0] + ' sil')
 
             for word in words[1:] : 

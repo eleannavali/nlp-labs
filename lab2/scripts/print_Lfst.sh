@@ -1,0 +1,1 @@
+fstdraw --isymbols=/home/eleanna/Desktop/master/nlp/nlp-labs/lab2/kaldi_process/data/lang/phones.txt --osymbols=/home/eleanna/Desktop/master/nlp/nlp-labs/lab2/kaldi_process/data/lang/words.txt /home/eleanna/Desktop/master/nlp/nlp-labs/lab2/kaldi_process/data/lang/L.fst | dot -Tpng > /home/eleanna/Desktop/master/nlp/nlp-labs/lab2/img/L.png

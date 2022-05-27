@@ -11,4 +11,6 @@ DATA_PATH = os.path.join(BASE_PATH, "datasets")
 # Min-max of lens: 1-62
 
 MAX_LENGTH=40
+EMB_DIM = 50 
+#NUM_EMB = 
 

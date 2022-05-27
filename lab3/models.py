@@ -1,7 +1,6 @@
 import torch
-
 from torch import nn
-
+from config import  EMB_DIM, MAX_LENGTH
 
 class BaselineDNN(nn.Module):
     """
@@ -12,30 +11,27 @@ class BaselineDNN(nn.Module):
        to the number of classes.ngth)
     """
 
-    def __init__(self, output_size, embeddings, trainable_emb=False):
+    def __init__(self, output_size, embeddings, trainable_emb=True) :
         """
 
         Args:
             output_size(int): the number of classes
-            embeddings(bool):  the 2D matrix with the pretrained embeddings
+            embeddings(nparray):  the  2D matrix with the pretrained embeddings
             trainable_emb(bool): train (finetune) or freeze the weights
                 the embedding layer
         """
 
-        super(BaselineDNN, self).__init__()
+        super(BaselineDNN, self).__init__() 
 
         # 1 - define the embedding layer
-        ...  # EX4
-
+        self.embed_l = nn.Embedding.from_pretrained(embeddings, freeze=trainable_emb)  # EX4
         # 2 - initialize the weights of our Embedding layer
         # from the pretrained word embeddings
-        ...  # EX4
-
         # 3 - define if the embedding layer will be frozen or finetuned
-        ...  # EX4
 
         # 4 - define a non-linear transformation of the representations
-        ...  # EX5
+        self.linear1 = nn.Linear(EMB_DIM, output_size) # EX5
+        self.relu = nn.ReLU()
 
         # 5 - define the final Linear layer which maps
         # the representations to the classes
@@ -51,15 +47,15 @@ class BaselineDNN(nn.Module):
         """
 
         # 1 - embed the words, using the embedding layer
-        embeddings = ...  # EX6
-
+        embeddings = self.embed_l(x) # EX6  batch, 40, 50
+    
         # 2 - construct a sentence representation out of the word embeddings
-        representations = ...  # EX6
+        representations =  torch.mean(embeddings, dim=1) # EX6  batch, 50
 
         # 3 - transform the representations to new ones.
-        representations = ...  # EX6
-
+        representations = self.relu(representations) # EX6
+        
         # 4 - project the representations to classes using a linear layer
-        logits = ...  # EX6
+        logits = self.linear1(representations)  # EX6 batch, class_size
 
         return logits

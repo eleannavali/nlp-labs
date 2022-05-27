@@ -29,7 +29,7 @@ EMBEDDINGS = os.path.join(EMB_PATH, "glove.6B.50d.txt")
 # 2 - set the correct dimensionality of the embeddings
 EMB_DIM = 50
 
-EMB_TRAINABLE = False
+EMB_TRAINABLE = True
 BATCH_SIZE = 128
 EPOCHS = 50
 DATASET = "MR"  # options: "MR", "Semeval2017A"
@@ -72,19 +72,19 @@ test_set = SentenceDataset(X_test, y_test, word2idx)
 # print("dataset tuple:",train_set[0])
 
 # # EX4 - Define our PyTorch-based DataLoader
-# train_loader = ...  # EX7
-# test_loader = ...  # EX7
+train_loader = DataLoader(train_set, batch_size=16, shuffle=True, num_workers=2)    # EX7
+test_loader =  DataLoader(train_set, batch_size=16, shuffle=True, num_workers=2) # EX7
 
 # #############################################################################
 # # Model Definition (Model, Loss Function, Optimizer)
 # #############################################################################
-# model = BaselineDNN(output_size=...,  # EX8
-#                     embeddings=embeddings,
-#                     trainable_emb=EMB_TRAINABLE)
+model = BaselineDNN(output_size=2,  # EX8
+                    embeddings=embeddings,
+                    trainable_emb=EMB_TRAINABLE)
 
 # # move the mode weight to cpu or gpu
-# model.to(DEVICE)
-# print(model)
+model.to(DEVICE)
+print(model)
 
 # # We optimize ONLY those parameters that are trainable (p.requires_grad==True)
 # criterion = ...  # EX8

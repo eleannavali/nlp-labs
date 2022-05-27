@@ -1,6 +1,8 @@
 from torch.utils.data import Dataset
 from tqdm import tqdm
 from nltk.tokenize import word_tokenize
+import numpy as np
+from config import MAX_LENGTH
 
 class SentenceDataset(Dataset):
     """
@@ -36,9 +38,38 @@ class SentenceDataset(Dataset):
         self.word2idx = word2idx
 
         # EX2
-        raise NotImplementedError
-        for data_point in X : 
-            tokens = word_tokenize(data_point)
+        self.encoded_X=[]
+        self.tokenized_X = [word_tokenize(data_point) for data_point in X]
+        print("10 first training examples:",self.tokenized_X[0:10])
+
+        # length_tmp=[]
+        for review in self.tokenized_X:
+            temp=[]
+            # length_tmp.append(len(review))
+            for i,token in enumerate(review):
+                if i > MAX_LENGTH:
+                    break
+                if token in self.word2idx.keys():
+                    temp.append(self.word2idx[token])
+                else:
+                    temp.append('<unk>')
+                    
+            if len(review)< MAX_LENGTH:
+                zeros_pad = MAX_LENGTH - len(review)
+                for _ in range(zeros_pad):
+                    temp.append(0)
+
+            self.encoded_X.append(temp)
+
+            
+            
+
+        # print("Mean of lens:", np.mean(length_tmp))
+        # print("Median of lens:", np.median(length_tmp))
+        # print("Min-max of lens:", np.min(length_tmp),np.max(length_tmp))
+        
+
+
 
     def __len__(self):
         """
@@ -78,7 +109,10 @@ class SentenceDataset(Dataset):
         """
 
         # EX3
+        example = self.encoded_X[index]
+        label = self.labels[index]
+        length = len(self.tokenized_X[index])
 
-        # return example, label, length
-        raise NotImplementedError
+        return example, label, length
+        
 

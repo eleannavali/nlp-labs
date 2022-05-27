@@ -40,7 +40,7 @@ def load_word_vectors(file, dim):
         print("Loaded word embeddings from cache.")
         return cache
     except OSError:
-        print("Failed to load {}".format(file))
+        print("Failed to load {} from cache.".format(file))
 
     # create the necessary dictionaries and the word embeddings matrix
     if os.path.exists(file):

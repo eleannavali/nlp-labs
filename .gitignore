@@ -138,3 +138,9 @@ dmypy.json
 
 lab1/openfst*
 lab1/fsts*
+
+lab3/embeddings
+lab1/
+lab2
+
+kaldi/

@@ -3,6 +3,7 @@ from tqdm import tqdm
 from nltk.tokenize import word_tokenize
 import numpy as np
 from config import MAX_LENGTH
+import torch.tensor as tensor
 
 class SentenceDataset(Dataset):
     """
@@ -52,7 +53,7 @@ class SentenceDataset(Dataset):
                 if token in self.word2idx.keys():
                     temp.append(self.word2idx[token])
                 else:
-                    temp.append('<unk>')
+                    temp.append(self.word2idx['<unk>'])
                     
             if len(review)< MAX_LENGTH:
                 zeros_pad = MAX_LENGTH - len(review)
@@ -113,6 +114,6 @@ class SentenceDataset(Dataset):
         label = self.labels[index]
         length = len(self.tokenized_X[index])
 
-        return example, label, length
+        return tensor(example), tensor(label), length
         
 

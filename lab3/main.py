@@ -86,6 +86,11 @@ model = BaselineDNN(output_size=2,  # EX8
 model.to(DEVICE)
 print(model)
 
+for x,y,k in train_loader:
+    pred = model(x,k)
+    print(pred[0],y[0])
+    break
+
 # # We optimize ONLY those parameters that are trainable (p.requires_grad==True)
 # criterion = ...  # EX8
 # parameters = ...  # EX8

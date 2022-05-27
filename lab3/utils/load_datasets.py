@@ -86,7 +86,6 @@ def load_MR():
 
     X_train = pos[:split] + neg[:split]
     y_train = pos_labels[:split] + neg_labels[:split]
-
     X_test = pos[split:] + neg[split:]
     y_test = pos_labels[split:] + neg_labels[split:]
 

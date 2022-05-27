@@ -24,7 +24,7 @@ warnings.filterwarnings("ignore", category=UndefinedMetricWarning)
 # for example http://nlp.stanford.edu/data/glove.6B.zip
 
 # 1 - point to the pretrained embeddings file (must be in /embeddings folder)
-EMBEDDINGS = os.path.join(EMB_PATH, "glove.6B.50d.txt")
+#EMBEDDINGS = os.path.join(EMB_PATH, "glove.6B.50d.txt")
 
 # 2 - set the correct dimensionality of the embeddings
 EMB_DIM = 50
@@ -43,7 +43,7 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # load word embeddings
 print("loading word embeddings...")
-word2idx, idx2word, embeddings = load_word_vectors(EMBEDDINGS, EMB_DIM)
+#word2idx, idx2word, embeddings = load_word_vectors(EMBEDDINGS, EMB_DIM)
 
 # load the raw data
 if DATASET == "Semeval2017A":
@@ -53,10 +53,15 @@ elif DATASET == "MR":
 else:
     raise ValueError("Invalid dataset")
 
-# convert data labels from strings to integers
-y_train = ...  # EX1
-y_test = ...  # EX1
-n_classes = ...  # EX1 - LabelEncoder.classes_.size
+# convert data labels from strings to 
+lab_encoder = LabelEncoder()
+lab_encoder.fit(y_train)
+y_train = lab_encoder.transform(y_train) #EX1
+y_test = lab_encoder.transform(y_test)   #EX1
+n_classes = lab_encoder.classes_  # EX1 - LabelEncoder.classes_.size
+print('Total number of classes ', n_classes)
+print("First 10 labels : ", y_train[0:10])
+print("Coressponding to : ", lab_encoder.inverse_transform(y_train[0:10]))
 
 # Define our PyTorch-based Dataset
 train_set = SentenceDataset(X_train, y_train, word2idx)

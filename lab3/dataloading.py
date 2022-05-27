@@ -1,6 +1,6 @@
 from torch.utils.data import Dataset
 from tqdm import tqdm
-
+from nltk.tokenize import word_tokenize
 
 class SentenceDataset(Dataset):
     """
@@ -31,12 +31,14 @@ class SentenceDataset(Dataset):
             word2idx (dict): a dictionary which maps words to indexes
         """
 
-        # self.data = X
-        # self.labels = y
-        # self.word2idx = word2idx
+        self.data = X
+        self.labels = y
+        self.word2idx = word2idx
 
         # EX2
         raise NotImplementedError
+        for data_point in X : 
+            tokens = word_tokenize(data_point)
 
     def __len__(self):
         """

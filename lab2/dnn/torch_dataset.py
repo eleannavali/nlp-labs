@@ -71,5 +71,8 @@ class TorchSpeechDataset(Dataset):
 
 
 if __name__ == "__main__":
-    data = TorchSpeechDataset("./", "./exp_tri1_ali_train", "train")
+    data = TorchSpeechDataset("./", "/home/eleanna/Desktop/master/nlp/nlp-labs/kaldi/egs/usc/exp/triphone_train_ali", "train")
+    for i,d in enumerate(data):
+        print(i,'> ',d)
+        
     import ipdb; ipdb.set_trace()

@@ -77,6 +77,8 @@ def eval_dataset(dataloader, model, loss_function):
     model.eval()
     running_loss = 0.0
     running_acc = 0.0
+    running_f1 = 0.0
+    running_recall = 0.0
 
     y_pred = []  # the predicted labels
     y = []  # the gold labels

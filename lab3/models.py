@@ -64,11 +64,11 @@ class BaselineDNN(nn.Module):
         
 
         # 3 - transform the representations to new ones.
-        representations = self.linear2(representations)
+        representations = self.linear1(representations)
         representations = self.relu(representations) # EX6
         
         # 4 - project the representations to classes using a linear layer
-        logits = self.linear1(representations)  # EX6 batch, class_size
+        logits = self.linear2(representations)  # EX6 batch, class_size
 
         return logits
 

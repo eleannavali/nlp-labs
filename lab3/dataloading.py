@@ -48,7 +48,7 @@ class SentenceDataset(Dataset):
             temp=[]
             # length_tmp.append(len(review))
             for i,token in enumerate(review):
-                if i > MAX_LENGTH:
+                if i >= MAX_LENGTH:
                     break
                 if token in self.word2idx.keys():
                     temp.append(self.word2idx[token])

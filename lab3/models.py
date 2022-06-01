@@ -53,7 +53,7 @@ class BaselineDNN(nn.Module):
         # 1 - embed the words, using the embedding layer
         embeddings = self.embed_l(x) # EX6  batch, 40, 50
     
-        #TODO: we have to mask padding zeros before mean()
+
         # 2 - construct a sentence representation out of the word embeddings
         #representations =  torch.mean(embeddings, dim=1) # EX6  batch, 50
 

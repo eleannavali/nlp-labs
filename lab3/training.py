@@ -2,7 +2,8 @@ import math
 import sys
 
 import torch
-from sklearn.metrics import f1_score, recall_score
+from sklearn.metrics import f1_score, recall_score 
+#  ERROR on sklearn metrices: Classification metrics can't handle a mix of multilabel-indicator and continuous-multioutput targets
 
 def progress(loss, epoch, batch, batch_size, dataset_size):
     """
@@ -108,16 +109,16 @@ def eval_dataset(dataloader, model, loss_function):
             loss = loss_function(labels, pred) # EX9
 
             # Step 4 - make predictions (class = argmax of posteriors)
-            class_pred = torch.argmax(pred, dim=0)  # EX9
+            class_pred = torch.argmax(pred, dim=1)  # EX9
 
             # Step 5 - collect the predictions, gold labels and batch loss
             y_pred.append(class_pred)  # EX9
             y.append(labels)
 
             # compute batch accuracy
-            running_acc += torch.sum(y_pred == labels)/len(batch)
+            running_acc += torch.sum(pred == labels)/len(batch)
             running_loss += loss.data.item()
-            running_f1 += f1_score(class_pred, labels)
-            running_recall += recall_score(class_pred, labels)
+            running_f1 += f1_score(torch.argmax(labels,dim=1),class_pred)
+            running_recall += recall_score(torch.argmax(labels,dim=1),class_pred)
 
     return running_loss / index, (y_pred, y), running_acc / index, running_f1 / index , running_recall / index

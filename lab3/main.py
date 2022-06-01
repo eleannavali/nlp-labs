@@ -12,6 +12,8 @@ from models import BaselineDNN
 from training import train_dataset, eval_dataset
 from utils.load_datasets import load_MR, load_Semeval2017A
 from utils.load_embeddings import load_word_vectors
+from utils.plotting.py import plot_training_curves
+
 
 warnings.filterwarnings("ignore", category=UndefinedMetricWarning)
 
@@ -61,9 +63,9 @@ lab_encoder.fit(y_train)
 y_train = lab_encoder.transform(y_train) #EX1
 y_test = lab_encoder.transform(y_test)   #EX1
 n_classes = lab_encoder.classes_  # EX1 - LabelEncoder.classes_.size
-print('Total number of classes ', n_classes)
-print("First 10 labels : ", y_train[0:10])
-print("Coressponding to : ", lab_encoder.inverse_transform(y_train[0:10]))
+# print('Total number of classes ', n_classes)
+# print("First 10 labels : ", y_train[0:10])
+# print("Coressponding to : ", lab_encoder.inverse_transform(y_train[0:10]))
 
 # Define our PyTorch-based Dataset
 train_set = SentenceDataset(X_train, y_train, word2idx)
@@ -78,9 +80,14 @@ test_loader =  DataLoader(train_set, batch_size=16, shuffle=True, num_workers=2)
 # #############################################################################
 # # Model Definition (Model, Loss Function, Optimizer)
 # #############################################################################
-model = BaselineDNN(output_size=2,  # EX8
-                    embeddings=embeddings,
-                    trainable_emb=EMB_TRAINABLE)
+if DATASET=='MR':
+    model = BaselineDNN(output_size=2,  # EX8
+                        embeddings=embeddings,
+                        trainable_emb=EMB_TRAINABLE)
+else:
+    model = BaselineDNN(output_size=3,  # EX8
+                        embeddings=embeddings,
+                        trainable_emb=EMB_TRAINABLE)
 
 # # move the mode weight to cpu or gpu
 model.to(DEVICE)
@@ -96,7 +103,7 @@ if DATASET=='MR':
     criterion = torch.nn.BCEWithLogitsLoss()
 else:
     criterion = torch.nn.CrossEntropyLoss()
-parameters = ...  # EX8
+parameters =  (p for p in model.parameters() if p.requires_grad)
 optimizer = torch.optim.Adam(parameters, lr=1e-4)
 
 #############################################################################
@@ -107,10 +114,13 @@ for epoch in range(1, EPOCHS + 1):
     train_dataset(epoch, train_loader, model, criterion, optimizer)
 
     # evaluate the performance of the model, on both data sets
-    train_loss, (y_train_gold, y_train_pred) = eval_dataset(train_loader,
+    train_loss, accuracy_train, f1_train, recall_train = eval_dataset(train_loader,
                                                             model,
                                                             criterion)
 
-    test_loss, (y_test_gold, y_test_pred) = eval_dataset(test_loader,
+    test_loss, accuracy_test, f1_test, recall_test = eval_dataset(test_loader,
                                                          model,
                                                          criterion)
+    
+plot_training_curves(train_loss,accuracy_train,test_loss,accuracy_test)
+    

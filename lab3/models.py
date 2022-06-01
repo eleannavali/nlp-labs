@@ -29,6 +29,7 @@ class BaselineDNN(nn.Module):
         # from the pretrained word embeddings
         # 3 - define if the embedding layer will be frozen or finetuned
 
+
         # 4 - define a non-linear transformation of the representations
         self.linear1 = nn.Linear(EMB_DIM, 60)
         self.relu = nn.ReLU()

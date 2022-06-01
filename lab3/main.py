@@ -86,28 +86,28 @@ model = BaselineDNN(output_size=2,  # EX8
 model.to(DEVICE)
 print(model)
 
-for x,y,k in train_loader:
-    pred = model(x,k)
-    print(pred[0],y[0])
-    break
+# for x,y,k in train_loader:
+#     pred = model(x,k)
+#     print(pred[0],y[0])
+#     break
 
-# # We optimize ONLY those parameters that are trainable (p.requires_grad==True)
-# criterion = ...  # EX8
-# parameters = ...  # EX8
-# optimizer = ...  # EX8
+# We optimize ONLY those parameters that are trainable (p.requires_grad==True)
+criterion =   # EX8
+parameters = ...  # EX8
+optimizer = ...  # EX8
 
-# #############################################################################
-# # Training Pipeline
-# #############################################################################
-# for epoch in range(1, EPOCHS + 1):
-#     # train the model for one epoch
-#     train_dataset(epoch, train_loader, model, criterion, optimizer)
+#############################################################################
+# Training Pipeline
+#############################################################################
+for epoch in range(1, EPOCHS + 1):
+    # train the model for one epoch
+    train_dataset(epoch, train_loader, model, criterion, optimizer)
 
-#     # evaluate the performance of the model, on both data sets
-#     train_loss, (y_train_gold, y_train_pred) = eval_dataset(train_loader,
-#                                                             model,
-#                                                             criterion)
+    # evaluate the performance of the model, on both data sets
+    train_loss, (y_train_gold, y_train_pred) = eval_dataset(train_loader,
+                                                            model,
+                                                            criterion)
 
-#     test_loss, (y_test_gold, y_test_pred) = eval_dataset(test_loader,
-#                                                          model,
-#                                                          criterion)
+    test_loss, (y_test_gold, y_test_pred) = eval_dataset(test_loader,
+                                                         model,
+                                                         criterion)

@@ -13,6 +13,7 @@ from training import train_dataset, eval_dataset
 from utils.load_datasets import load_MR, load_Semeval2017A
 from utils.load_embeddings import load_word_vectors
 from utils.plotting import plot_training_curves
+# import numpy as np
 
 
 warnings.filterwarnings("ignore", category=UndefinedMetricWarning)
@@ -52,8 +53,10 @@ word2idx, idx2word, embeddings = load_word_vectors(EMBEDDINGS, EMB_DIM)
 # load the raw data
 if DATASET == "Semeval2017A":
     X_train, y_train, X_test, y_test = load_Semeval2017A()
+    # one_hot_encoder = {0:np.array([1., 0., 0.]), 1:np.array([0., 1., 0.]), 2:np.array([0., 0., 1.])}
 elif DATASET == "MR":
     X_train, y_train, X_test, y_test = load_MR()
+    # one_hot_encoder = {0:np.array([1., 0.]), 1:np.array([0., 1.])}
 else:
     raise ValueError("Invalid dataset")
 
@@ -63,9 +66,19 @@ lab_encoder.fit(y_train)
 y_train = lab_encoder.transform(y_train) #EX1
 y_test = lab_encoder.transform(y_test)   #EX1
 n_classes = lab_encoder.classes_  # EX1 - LabelEncoder.classes_.size
-# print('Total number of classes ', n_classes)
-# print("First 10 labels : ", y_train[0:10])
-# print("Coressponding to : ", lab_encoder.inverse_transform(y_train[0:10]))
+
+print('Total number of classes ', len(n_classes))
+print("First 10 labels : ", y_train[0:10])
+print("Coressponding to : ", lab_encoder.inverse_transform(y_train[0:10]))
+
+# Custom one-hot
+# y_train = [one_hot_encoder[y] for y in y_train]
+# y_test = [one_hot_encoder[y] for y in y_test]
+
+# Torch one-hot
+y_train = torch.Tensor.numpy(torch.nn.functional.one_hot(torch.tensor(y_train,dtype=torch.long),len(n_classes))*1.)
+y_test = torch.Tensor.numpy(torch.nn.functional.one_hot(torch.tensor(y_test,dtype=torch.long),len(n_classes))*1.)
+
 
 # Define our PyTorch-based Dataset
 train_set = SentenceDataset(X_train, y_train, word2idx)

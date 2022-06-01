@@ -76,6 +76,7 @@ def eval_dataset(dataloader, model, loss_function):
     # disable regularization layers, such as Dropout
     model.eval()
     running_loss = 0.0
+    running_acc = 0.0
 
     y_pred = []  # the predicted labels
     y = []  # the gold labels
@@ -91,22 +92,27 @@ def eval_dataset(dataloader, model, loss_function):
             inputs, labels, lengths = batch
 
             # Step 1 - move the batch tensors to the right device
-            ...  # EX9
+            inputs.to(device) # EX9
+            labels.to(device)
+            lengths.to(device)  
 
             # Step 2 - forward pass: y' = model(x)
-            ...  # EX9
+            pred = model(inputs, lengths) # EX9  # EX9
 
             # Step 3 - compute loss.
             # We compute the loss only for inspection (compare train/test loss)
             # because we do not actually backpropagate in test time
-            loss = ...  # EX9
+            loss = loss_function(labels, pred) # EX9
 
             # Step 4 - make predictions (class = argmax of posteriors)
-            ...  # EX9
+            class_pred = torch.argmax(pred, dim=0)  # EX9
 
             # Step 5 - collect the predictions, gold labels and batch loss
-            ...  # EX9
+            y_pred.append(class_pred)  # EX9
+            y.append(labels)
 
+            # compute batch accuracy
+            running_acc += torch.sum(y_pred == labels)
             running_loss += loss.data.item()
 
-    return running_loss / index, (y_pred, y)
+    return running_loss / index, (y_pred, y), running_acc / index

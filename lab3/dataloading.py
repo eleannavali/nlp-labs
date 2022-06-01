@@ -114,6 +114,6 @@ class SentenceDataset(Dataset):
         label = self.labels[index]
         length = len(self.tokenized_X[index])
 
-        return tensor(example), tensor(label), length
+        return tensor(example), tensor(label), tensor(length)
         
 

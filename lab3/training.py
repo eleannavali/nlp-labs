@@ -51,13 +51,13 @@ def train_dataset(_epoch, dataloader, model, loss_function, optimizer):
         pred = model(inputs, lengths) # EX9
 
         # Step 3 - compute loss: L = loss_function(y, y')
-        loss = loss_function()  # EX9
+        loss = loss_function(labels,pred)  # EX9
 
         # Step 4 - backward pass: compute gradient wrt model parameters
-        ...  # EX9
+        loss.backward()
 
         # Step 5 - update weights
-        ...  # EX9
+        optimizer.step()
 
         running_loss += loss.data.item()
 

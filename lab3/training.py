@@ -2,7 +2,7 @@ import math
 import sys
 
 import torch
-
+from sklearn.metrics import f1_score, recall_score
 
 def progress(loss, epoch, batch, batch_size, dataset_size):
     """
@@ -112,7 +112,9 @@ def eval_dataset(dataloader, model, loss_function):
             y.append(labels)
 
             # compute batch accuracy
-            running_acc += torch.sum(y_pred == labels)
+            running_acc += torch.sum(y_pred == labels)/len(batch)
             running_loss += loss.data.item()
+            running_f1 += f1_score(class_pred, labels)
+            running_recall += recall_score(class_pred, labels)
 
-    return running_loss / index, (y_pred, y), running_acc / index
+    return running_loss / index, (y_pred, y), running_acc / index, running_f1 / index , running_recall / index

@@ -29,10 +29,10 @@ def train_dataset(_epoch, dataloader, model, loss_function, optimizer):
     # enable regularization layers, such as Dropout
     model.train()
     running_loss = 0.0
+    running_acc = 0.0
 
     # obtain the model's device ID
     device = next(model.parameters()).device
-
     for index, batch in enumerate(dataloader, 1):
         # get the inputs (batch)
         inputs, labels, lengths = batch
@@ -60,6 +60,7 @@ def train_dataset(_epoch, dataloader, model, loss_function, optimizer):
         optimizer.step()
 
         running_loss += loss.data.item()
+ 
 
         # print statistics
         progress(loss=loss.data.item(),
@@ -77,6 +78,8 @@ def eval_dataset(dataloader, model, loss_function):
     model.eval()
     running_loss = 0.0
     running_acc = 0.0
+    running_f1 = 0.0
+    running_recall = 0.0
 
     y_pred = []  # the predicted labels
     y = []  # the gold labels

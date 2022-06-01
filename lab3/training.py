@@ -51,8 +51,8 @@ def train_dataset(_epoch, dataloader, model, loss_function, optimizer):
         # Step 2 - forward pass: y' = model(x)
         pred = model(inputs, lengths) # EX9
 
-        # Step 3 - compute loss: L = loss_function(y, y')
-        loss = loss_function(labels,pred)  # EX9
+        # Step 3 - compute loss: L = loss_function(y', y)
+        loss = loss_function(pred,labels)  # EX9
 
         # Step 4 - backward pass: compute gradient wrt model parameters
         loss.backward()
@@ -106,7 +106,7 @@ def eval_dataset(dataloader, model, loss_function):
             # Step 3 - compute loss.
             # We compute the loss only for inspection (compare train/test loss)
             # because we do not actually backpropagate in test time
-            loss = loss_function(labels, pred) # EX9
+            loss = loss_function(pred,labels) # EX9
 
             # Step 4 - make predictions (class = argmax of posteriors)
             class_pred = torch.argmax(pred, dim=1)  # EX9

@@ -30,8 +30,8 @@ class BaselineDNN(nn.Module):
         # 3 - define if the embedding layer will be frozen or finetuned
 
         # 4 - define a non-linear transformation of the representations
+        self.linear1 = nn.Linear(EMB_DIM, 60)
         self.relu = nn.ReLU()
-        self. = nn.Linear(EMB_DIM, 60)
         self.linear2 = nn.Linear(60, output_size) # EX5
         
 

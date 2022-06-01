@@ -92,9 +92,12 @@ print(model)
 #     break
 
 # We optimize ONLY those parameters that are trainable (p.requires_grad==True)
-criterion =   # EX8
+if DATASET=='MR':
+    criterion = torch.nn.BCEWithLogitsLoss()
+else:
+    criterion = torch.nn.CrossEntropyLoss()
 parameters = ...  # EX8
-optimizer = ...  # EX8
+optimizer = torch.optim.Adam(parameters, lr=1e-4)
 
 #############################################################################
 # Training Pipeline

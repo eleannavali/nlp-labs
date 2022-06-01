@@ -14,6 +14,7 @@ def plot_training_curves(tr_loss, tr_acc, val_loss, val_acc):
     plt.xlabel("Epochs") #title for x axis
     plt.ylabel("Loss")   #title for y axis
     plt.legend(fontsize=11)
+    plt.savefig('../diagrams/loss.png')
 
     #Plotting Accuracy figures.
     fig = plt.figure(figsize=(12,10)) #figure size h,w in inches
@@ -22,3 +23,4 @@ def plot_training_curves(tr_loss, tr_acc, val_loss, val_acc):
     plt.xlabel("Epochs")   #title for x axis
     plt.ylabel("Accuracy") #title for y axis
     plt.legend(fontsize=11)
+    plt.savefig('../diagrams/accuracy.png')

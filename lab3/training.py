@@ -78,7 +78,7 @@ def eval_dataset(dataloader, model, loss_function):
     # disable regularization layers, such as Dropout
     model.eval()
     running_loss = 0.0
-    running_acc = 0.0
+    num_of_corrects = 0.0
     running_f1 = 0.0
     running_recall = 0.0
 
@@ -116,9 +116,9 @@ def eval_dataset(dataloader, model, loss_function):
             y.append(labels)
 
             # compute batch accuracy
-            running_acc += torch.sum(pred == labels)/len(batch)
+            num_of_corrects += torch.sum(class_pred == torch.argmax(labels,dim=1))
             running_loss += loss.data.item()
             running_f1 += f1_score(torch.argmax(labels,dim=1),class_pred)
             running_recall += recall_score(torch.argmax(labels,dim=1),class_pred)
 
-    return running_loss / index, (y_pred, y), running_acc / index, running_f1 / index , running_recall / index
+    return running_loss / index, (y_pred, y), num_of_corrects / (index*len(batch)), running_f1 / index , running_recall / index

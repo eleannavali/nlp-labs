@@ -30,11 +30,11 @@ warnings.filterwarnings("ignore", category=UndefinedMetricWarning)
 EMBEDDINGS = os.path.join(EMB_PATH, "glove.6B.50d.txt")
 
 # 2 - set the correct dimensionality of the embeddings
-EMB_DIM = 10
+EMB_DIM = 50
 
 EMB_TRAINABLE = True
 BATCH_SIZE = 128
-EPOCHS = 50
+EPOCHS = 4
 DATASET = "MR"  # options: "MR", "Semeval2017A"
 
 # if your computer has a CUDA compatible gpu use it, otherwise use the cpu
@@ -144,7 +144,7 @@ for epoch in range(1, EPOCHS + 1):
     print("F1 score for test set is",f1_test)
     print("Recall for training set is",recall_train)
     print("Recall for test set is",recall_test)
-
+    
     tr_loss.append(train_loss)
     val_loss.append(test_loss)
     tr_acc.append(accuracy_train)

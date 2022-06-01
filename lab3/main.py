@@ -34,7 +34,7 @@ EMB_DIM = 50
 
 EMB_TRAINABLE = True
 BATCH_SIZE = 128
-EPOCHS = 50
+EPOCHS = 2
 DATASET = "MR"  # options: "MR", "Semeval2017A"
 
 # if your computer has a CUDA compatible gpu use it, otherwise use the cpu
@@ -122,18 +122,31 @@ optimizer = torch.optim.Adam(parameters, lr=1e-4)
 #############################################################################
 # Training Pipeline
 #############################################################################
+tr_loss = []
+val_loss = []
+tr_acc = []
+val_acc =[]
+tr_f1 = []
+val_f1 = []
+tr_rec = []
+val_rec = []
 for epoch in range(1, EPOCHS + 1):
     # train the model for one epoch
     train_dataset(epoch, train_loader, model, criterion, optimizer)
 
     # evaluate the performance of the model, on both data sets
-    train_loss, accuracy_train, f1_train, recall_train = eval_dataset(train_loader,
-                                                            model,
-                                                            criterion)
+    train_loss, (y_pred_train, y_train), accuracy_train, f1_train, recall_train = eval_dataset(train_loader,model,criterion)
 
-    test_loss, accuracy_test, f1_test, recall_test = eval_dataset(test_loader,
-                                                         model,
-                                                         criterion)
+    test_loss,(y_pred_test, y_test),  accuracy_test, f1_test, recall_test = eval_dataset(test_loader,model,criterion)
     
-plot_training_curves(train_loss,accuracy_train,test_loss,accuracy_test)
+    tr_loss.append(train_loss)
+    val_loss.append(test_loss)
+    tr_acc.append(accuracy_train)
+    val_acc.append(accuracy_test)
+    tr_f1.append(f1_train)
+    val_f1.append(f1_test)
+    tr_rec.append(recall_train)
+    val_rec.append(recall_test)
+
+plot_training_curves(tr_loss,tr_acc,val_loss,val_acc)
     

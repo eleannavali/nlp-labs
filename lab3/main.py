@@ -34,7 +34,7 @@ EMB_DIM = 50
 
 EMB_TRAINABLE = True
 BATCH_SIZE = 128
-EPOCHS = 4
+EPOCHS = 50
 DATASET = "MR"  # options: "MR", "Semeval2017A"
 
 # if your computer has a CUDA compatible gpu use it, otherwise use the cpu

@@ -13,7 +13,7 @@ from training import train_dataset, eval_dataset
 from utils.load_datasets import load_MR, load_Semeval2017A
 from utils.load_embeddings import load_word_vectors
 from utils.plotting import plot_training_curves
-# import numpy as np
+import numpy as np
 
 
 warnings.filterwarnings("ignore", category=UndefinedMetricWarning)
@@ -30,11 +30,11 @@ warnings.filterwarnings("ignore", category=UndefinedMetricWarning)
 EMBEDDINGS = os.path.join(EMB_PATH, "glove.6B.50d.txt")
 
 # 2 - set the correct dimensionality of the embeddings
-EMB_DIM = 50
+EMB_DIM = 10
 
 EMB_TRAINABLE = True
 BATCH_SIZE = 128
-EPOCHS = 2
+EPOCHS = 50
 DATASET = "MR"  # options: "MR", "Semeval2017A"
 
 # if your computer has a CUDA compatible gpu use it, otherwise use the cpu
@@ -139,6 +139,12 @@ for epoch in range(1, EPOCHS + 1):
 
     test_loss,(y_pred_test, y_test),  accuracy_test, f1_test, recall_test = eval_dataset(test_loader,model,criterion)
     
+    print(f"For epoch {epoch}:")
+    print("F1 score for training set is",f1_train)
+    print("F1 score for test set is",f1_test)
+    print("Recall for training set is",recall_train)
+    print("Recall for test set is",recall_test)
+
     tr_loss.append(train_loss)
     val_loss.append(test_loss)
     tr_acc.append(accuracy_train)
@@ -149,4 +155,9 @@ for epoch in range(1, EPOCHS + 1):
     val_rec.append(recall_test)
 
 plot_training_curves(tr_loss,tr_acc,val_loss,val_acc)
-    
+
+print(f"Best f1 score={max(tr_f1)} for epoch {np.argmax(tr_f1)} in training set.")
+print(f"Best f1 score={max(val_f1)} for epoch {np.argmax(val_f1)} in test set")
+
+print(f"Best recall score={max(tr_rec)} for epoch {np.argmax(tr_rec)} in training set.")
+print(f"Best recall score={max(val_rec)} for epoch {np.argmax(val_rec)} in test set")

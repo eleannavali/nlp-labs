@@ -12,7 +12,7 @@ from models import BaselineDNN
 from training import train_dataset, eval_dataset
 from utils.load_datasets import load_MR, load_Semeval2017A
 from utils.load_embeddings import load_word_vectors
-from utils.plotting.py import plot_training_curves
+from utils.plotting import plot_training_curves
 
 
 warnings.filterwarnings("ignore", category=UndefinedMetricWarning)

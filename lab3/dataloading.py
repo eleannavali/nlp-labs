@@ -5,6 +5,7 @@ import numpy as np
 from config import MAX_LENGTH
 import torch.tensor as tensor
 
+# TODO: check the MAX_LENGTH for Semeval2017A dataset
 class SentenceDataset(Dataset):
     """
     Our custom PyTorch Dataset, for preparing strings of text (sentences)

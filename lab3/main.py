@@ -71,13 +71,15 @@ print('Total number of classes ', len(n_classes))
 print("First 10 labels : ", y_train[0:10])
 print("Coressponding to : ", lab_encoder.inverse_transform(y_train[0:10]))
 
-# Custom one-hot
-# y_train = [one_hot_encoder[y] for y in y_train]
-# y_test = [one_hot_encoder[y] for y in y_test]
+# BCEWithLogitsLoss needs one-hot encoded labels vs CrossEntropyLoss needs integers as labels
+if DATASET == "MR":
+    # Custom one-hot
+    # y_train = [one_hot_encoder[y] for y in y_train]
+    # y_test = [one_hot_encoder[y] for y in y_test]
 
-# Torch one-hot
-y_train = torch.Tensor.numpy(torch.nn.functional.one_hot(torch.tensor(y_train,dtype=torch.long),len(n_classes))*1.)
-y_test = torch.Tensor.numpy(torch.nn.functional.one_hot(torch.tensor(y_test,dtype=torch.long),len(n_classes))*1.)
+    # Torch one-hot
+    y_train = torch.Tensor.numpy(torch.nn.functional.one_hot(torch.tensor(y_train,dtype=torch.long),len(n_classes))*1.)
+    y_test = torch.Tensor.numpy(torch.nn.functional.one_hot(torch.tensor(y_test,dtype=torch.long),len(n_classes))*1.)
 
 
 # Define our PyTorch-based Dataset
@@ -88,7 +90,7 @@ test_set = SentenceDataset(X_test, y_test, word2idx)
 
 # # EX4 - Define our PyTorch-based DataLoader
 train_loader = DataLoader(train_set, batch_size=16, shuffle=True, num_workers=2)    # EX7
-test_loader =  DataLoader(train_set, batch_size=16, shuffle=True, num_workers=2) # EX7
+test_loader =  DataLoader(test_set, batch_size=16, shuffle=True, num_workers=2) # EX7
 
 # #############################################################################
 # # Model Definition (Model, Loss Function, Optimizer)
@@ -135,10 +137,16 @@ for epoch in range(1, EPOCHS + 1):
     train_dataset(epoch, train_loader, model, criterion, optimizer)
 
     # evaluate the performance of the model, on both data sets
-    train_loss, (y_pred_train, y_train), accuracy_train, f1_train, recall_train = eval_dataset(train_loader,model,criterion)
+    if DATASET=='MR':
+        train_loss, (y_pred_train, y_train), accuracy_train, f1_train, recall_train = eval_dataset(train_loader,model,criterion)
 
-    test_loss,(y_pred_test, y_test),  accuracy_test, f1_test, recall_test = eval_dataset(test_loader,model,criterion)
+        test_loss,(y_pred_test, y_test),  accuracy_test, f1_test, recall_test = eval_dataset(test_loader,model,criterion)
+    else:
+        train_loss, (y_pred_train, y_train), accuracy_train, f1_train, recall_train = eval_dataset(train_loader,model,criterion,binary_classification=False)
+
+        test_loss,(y_pred_test, y_test),  accuracy_test, f1_test, recall_test = eval_dataset(test_loader,model,criterion,binary_classification=False)
     
+
     print(f"For epoch {epoch}:")
     print("F1 score for training set is",f1_train)
     print("F1 score for test set is",f1_test)

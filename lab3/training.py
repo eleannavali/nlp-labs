@@ -73,7 +73,7 @@ def train_dataset(_epoch, dataloader, model, loss_function, optimizer):
     return running_loss / index
 
 
-def eval_dataset(dataloader, model, loss_function):
+def eval_dataset(dataloader, model, loss_function, binary_classification=True):
     # IMPORTANT: switch to eval mode
     # disable regularization layers, such as Dropout
     model.eval()
@@ -116,9 +116,15 @@ def eval_dataset(dataloader, model, loss_function):
             y.append(labels)
 
             # compute batch accuracy
-            num_of_corrects += torch.sum(class_pred == torch.argmax(labels,dim=1))
             running_loss += loss.data.item()
-            running_f1 += f1_score(torch.argmax(labels,dim=1),class_pred)
-            running_recall += recall_score(torch.argmax(labels,dim=1),class_pred)
+            if binary_classification:
+                num_of_corrects += torch.sum(class_pred == torch.argmax(labels,dim=1))
+                running_f1 += f1_score(torch.argmax(labels,dim=1),class_pred,average='macro')
+                running_recall += recall_score(torch.argmax(labels,dim=1),class_pred,average='macro')
+            else:
+                # print(labels.size(),class_pred.size())
+                num_of_corrects += torch.sum(class_pred == labels)
+                running_f1 += f1_score(labels,class_pred,average='macro')
+                running_recall += recall_score(labels,class_pred,average='macro')
 
     return running_loss / index, (y_pred, y), num_of_corrects / (index*len(batch)), running_f1 / index , running_recall / index

@@ -75,7 +75,7 @@ class BaselineDNN(nn.Module):
 
 # LSTM CLASS
 class LSTM(nn.Module) :
-    def __init__(self, output_size, embeddings) -> None:
+    def __init__(self, output_size, embeddings, concat=False) -> None:
         super(LSTM, self).__init__()
 
         self.hidden_size = 120
@@ -88,7 +88,10 @@ class LSTM(nn.Module) :
         num_embeddings, emb_dim = embeddings.shape
         self.lstm = nn.LSTM(input_size=emb_dim, hidden_size=self.hidden_size, num_layers=1, batch_first=True)
 
-        self.linear = nn.Linear(self.representation_size, self.output_size)
+        if concat==False :
+            self.linear = nn.Linear(self.representation_size, self.output_size)
+        else :
+            self.linear = nn.Linear(3*self.representation_size, self.output_size)
 
     def forward(self, x, lengths) :
         batch_size, max_length = x.shape
@@ -106,6 +109,18 @@ class LSTM(nn.Module) :
         for i in range(lengths.shape[ 0]):
             last = lengths[i] - 1 if lengths[i] <= max_length else max_length - 1
             representations[i] = ht[i, last, :]
+        
+        if self.concat==True : 
+            # mean of ht(for every word)
+            representations1 = torch.sum(ht, dim=1)
+            for i in range(lengths.shape[0]) :
+                representations1[i] = representations1[i] / lengths[i]
+            # max of ht in dim 1 (for every word)
+            representations2,_ = torch.max(ht, dim=1)
+            representations = torch.cat((representations,representations1, representations2), dim=1)  
+
+        
+
 
         logits = self.linear(representations) #16, 120
         return logits

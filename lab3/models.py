@@ -149,6 +149,56 @@ class Attention_DNN(nn.Module) :
 
         return out 
 
+
+class LSTM_Attention(nn.Module) :
+    def __init__(self, output_size, embeddings, concat=False) -> None:
+        super(LSTM_Attention, self).__init__()
+
+        self.hidden_size = 120
+        self.num_layers = 1 
+        self.representation_size = self.hidden_size
+        self.output_size = output_size
+        self.concat = concat
+
+        # Layers
+        self.embeddings = nn.Embedding.from_pretrained(torch.tensor(embeddings), freeze=True)  # EX4
+        num_embeddings, emb_dim = embeddings.shape
+        self.lstm = nn.LSTM(input_size=emb_dim, hidden_size=self.hidden_size, num_layers=1, batch_first=True)
+
+        if concat==False :
+            # attention layer
+            self.attention = SelfAttention(self.representation_size, batch_first=True, non_linearity='tanh' )
+            self.linear = nn.Linear(self.representation_size, self.output_size)
+        else :
+            # attention layer
+            self.attention = SelfAttention(3*self.representation_size, batch_first=True, non_linearity='tanh' )
+            self.linear = nn.Linear(3*self.representation_size, self.output_size)
+
+    def forward(self, x, lengths) :
+        batch_size, max_length = x.shape
+        embeddings = self.embeddings(x) # batch X sequence X emb_dim
+        # Helps the lstm ignore the padded zeros
+        # len=4, X[0]:torch.Size([358, 50]), <class 'torch.nn.utils.rnn.PackedSequence'>
+        X = torch.nn.utils.rnn.pack_padded_sequence(embeddings, lengths, batch_first=True, enforce_sorted=False)
+
+        ht, _ = self.lstm(X) #ht lstm size: 4 torch.Size([358, 120]) <class 'torch.nn.utils.rnn.PackedSequence'>
+
+        ht, _ = torch.nn.utils.rnn.pad_packed_sequence(ht, batch_first =True) #16, 33, 120 where 33 could be : 1-40
+        representations = ht
+        if self.concat==True : 
+            # mean of ht(for every word)
+            representations1 = torch.sum(ht, dim=1)
+            for i in range(lengths.shape[0]) :
+                representations1[i] = representations1[i] / lengths[i]
+            # max of ht in dim 1 (for every word)
+            representations2,_ = torch.max(ht, dim=1)
+            representations = torch.cat((representations,representations1, representations2), dim=1)  
+
+        weighted_representations, scores = self.attention(representations, lengths)
+        logits = self.linear(weighted_representations) #16, 120
+        return logits
+
+
 class SelfAttention(nn.Module):
     def __init__(self, attention_size, batch_first=False, non_linearity="tanh"):
         super(SelfAttention, self).__init__()

@@ -114,6 +114,8 @@ class SentenceDataset(Dataset):
         example = self.encoded_X[index]
         label = self.labels[index]
         length = len(self.tokenized_X[index])
+        if length > MAX_LENGTH:
+            length = MAX_LENGTH
 
         return tensor(example), tensor(label), tensor(length)
         

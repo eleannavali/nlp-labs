@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader
 
 from config import EMB_PATH
 from dataloading import SentenceDataset
-from models import BaselineDNN
+from models import BaselineDNN,LSTM
 from training import train_dataset, eval_dataset
 from utils.load_datasets import load_MR, load_Semeval2017A
 from utils.load_embeddings import load_word_vectors
@@ -36,6 +36,7 @@ EMB_TRAINABLE = True
 BATCH_SIZE = 128
 EPOCHS = 50
 DATASET = "MR"  # options: "MR", "Semeval2017A"
+MODEL = "DNN" # or "LSTM"
 
 # if your computer has a CUDA compatible gpu use it, otherwise use the cpu
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -92,17 +93,23 @@ test_set = SentenceDataset(X_test, y_test, word2idx)
 train_loader = DataLoader(train_set, batch_size=16, shuffle=True, num_workers=2)    # EX7
 test_loader =  DataLoader(test_set, batch_size=16, shuffle=True, num_workers=2) # EX7
 
-# #############################################################################
-# # Model Definition (Model, Loss Function, Optimizer)
-# #############################################################################
+#############################################################################
+# Model Definition (Model, Loss Function, Optimizer)
+#############################################################################
 if DATASET=='MR':
-    model = BaselineDNN(output_size=2,  # EX8
-                        embeddings=embeddings,
-                        trainable_emb=EMB_TRAINABLE)
+    if MODEL=="DNN":
+        model = BaselineDNN(output_size=2,  # EX8
+                            embeddings=embeddings,
+                            trainable_emb=EMB_TRAINABLE)
+    else:
+        model = LSTM(output_size=2,embeddings=embeddings)
 else:
-    model = BaselineDNN(output_size=3,  # EX8
-                        embeddings=embeddings,
-                        trainable_emb=EMB_TRAINABLE)
+    if MODEL=="DNN":
+        model = BaselineDNN(output_size=3,  # EX8
+                            embeddings=embeddings,
+                            trainable_emb=EMB_TRAINABLE)
+    else:
+        model = LSTM(output_size=3,embeddings=embeddings)
 
 # # move the mode weight to cpu or gpu
 model.to(DEVICE)
@@ -113,59 +120,59 @@ print(model)
 #     print(pred[0],y[0])
 #     break
 
-# We optimize ONLY those parameters that are trainable (p.requires_grad==True)
-if DATASET=='MR':
-    criterion = torch.nn.BCEWithLogitsLoss()
-else:
-    criterion = torch.nn.CrossEntropyLoss()
-parameters =  (p for p in model.parameters() if p.requires_grad)
-optimizer = torch.optim.Adam(parameters, lr=1e-4)
+# # We optimize ONLY those parameters that are trainable (p.requires_grad==True)
+# if DATASET=='MR':
+#     criterion = torch.nn.BCEWithLogitsLoss()
+# else:
+#     criterion = torch.nn.CrossEntropyLoss()
+# parameters =  (p for p in model.parameters() if p.requires_grad)
+# optimizer = torch.optim.Adam(parameters, lr=1e-4)
 
-#############################################################################
-# Training Pipeline
-#############################################################################
-tr_loss = []
-val_loss = []
-tr_acc = []
-val_acc =[]
-tr_f1 = []
-val_f1 = []
-tr_rec = []
-val_rec = []
-for epoch in range(1, EPOCHS + 1):
-    # train the model for one epoch
-    train_dataset(epoch, train_loader, model, criterion, optimizer)
+# #############################################################################
+# # Training Pipeline
+# #############################################################################
+# tr_loss = []
+# val_loss = []
+# tr_acc = []
+# val_acc =[]
+# tr_f1 = []
+# val_f1 = []
+# tr_rec = []
+# val_rec = []
+# for epoch in range(1, EPOCHS + 1):
+#     # train the model for one epoch
+#     train_dataset(epoch, train_loader, model, criterion, optimizer)
 
-    # evaluate the performance of the model, on both data sets
-    if DATASET=='MR':
-        train_loss, (y_pred_train, y_train), accuracy_train, f1_train, recall_train = eval_dataset(train_loader,model,criterion)
+#     # evaluate the performance of the model, on both data sets
+#     if DATASET=='MR':
+#         train_loss, (y_pred_train, y_train), accuracy_train, f1_train, recall_train = eval_dataset(train_loader,model,criterion)
 
-        test_loss,(y_pred_test, y_test),  accuracy_test, f1_test, recall_test = eval_dataset(test_loader,model,criterion)
-    else:
-        train_loss, (y_pred_train, y_train), accuracy_train, f1_train, recall_train = eval_dataset(train_loader,model,criterion,binary_classification=False)
+#         test_loss,(y_pred_test, y_test),  accuracy_test, f1_test, recall_test = eval_dataset(test_loader,model,criterion)
+#     else:
+#         train_loss, (y_pred_train, y_train), accuracy_train, f1_train, recall_train = eval_dataset(train_loader,model,criterion,binary_classification=False)
 
-        test_loss,(y_pred_test, y_test),  accuracy_test, f1_test, recall_test = eval_dataset(test_loader,model,criterion,binary_classification=False)
+#         test_loss,(y_pred_test, y_test),  accuracy_test, f1_test, recall_test = eval_dataset(test_loader,model,criterion,binary_classification=False)
     
 
-    print(f"For epoch {epoch}:")
-    print("F1 score for training set is",f1_train)
-    print("F1 score for test set is",f1_test)
-    print("Recall for training set is",recall_train)
-    print("Recall for test set is",recall_test)
+#     print(f"For epoch {epoch}:")
+#     print("F1 score for training set is",f1_train)
+#     print("F1 score for test set is",f1_test)
+#     print("Recall for training set is",recall_train)
+#     print("Recall for test set is",recall_test)
     
-    tr_loss.append(train_loss)
-    val_loss.append(test_loss)
-    tr_acc.append(accuracy_train)
-    val_acc.append(accuracy_test)
-    tr_f1.append(f1_train)
-    val_f1.append(f1_test)
-    tr_rec.append(recall_train)
-    val_rec.append(recall_test)
+#     tr_loss.append(train_loss)
+#     val_loss.append(test_loss)
+#     tr_acc.append(accuracy_train)
+#     val_acc.append(accuracy_test)
+#     tr_f1.append(f1_train)
+#     val_f1.append(f1_test)
+#     tr_rec.append(recall_train)
+#     val_rec.append(recall_test)
 
-plot_training_curves(tr_loss,tr_acc,val_loss,val_acc,DATASET)
+# plot_training_curves(tr_loss,tr_acc,val_loss,val_acc,DATASET)
 
-print(f"Best f1 score={max(tr_f1)} for epoch {np.argmax(tr_f1)} in training set.")
-print(f"Best f1 score={max(val_f1)} for epoch {np.argmax(val_f1)} in test set")
+# print(f"Best f1 score={max(tr_f1)} for epoch {np.argmax(tr_f1)} in training set.")
+# print(f"Best f1 score={max(val_f1)} for epoch {np.argmax(val_f1)} in test set")
 
-print(f"Best recall score={max(tr_rec)} for epoch {np.argmax(tr_rec)} in training set.")
-print(f"Best recall score={max(val_rec)} for epoch {np.argmax(val_rec)} in test set")
+# print(f"Best recall score={max(tr_rec)} for epoch {np.argmax(tr_rec)} in training set.")
+# print(f"Best recall score={max(val_rec)} for epoch {np.argmax(val_rec)} in test set")

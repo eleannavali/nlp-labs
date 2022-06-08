@@ -85,7 +85,7 @@ class LSTM(nn.Module) :
         self.output_size = output_size
 
         # Layers
-        self.embeddings = nn.Embedding.from_pretrained(embeddings, freeze=False)
+        self.embeddings = nn.Embedding.from_pretrained(torch.tensor(embeddings), freeze=True)  # EX4
         num_embeddings, emb_dim = embeddings.shape
         self.lstm = nn.LSTM(input_size=emb_dim, hidden_size=self.hidden_size, num_layers=1, batch_first=True)
 
@@ -93,17 +93,20 @@ class LSTM(nn.Module) :
 
     def forward(self, x, lengths) :
         batch_size, max_length = x.shape
-        embeddings = self.embeddings(x)
+        embeddings = self.embeddings(x) # 16, 40, 50
 
         # Helps the lstm ignore the padded zeros
+        # len=4, X[0]:torch.Size([358, 50]), <class 'torch.nn.utils.rnn.PackedSequence'>
         X = torch.nn.utils.rnn.pack_padded_sequence(embeddings, lengths, batch_first=True, enforce_sorted=False)
-        ht, _ = self.lstm(X)
-        ht, _ = torch.nn.utils.rnn.pad_packed_sequence(ht, batch_first =True)
+
+        ht, _ = self.lstm(X) #ht lstm size: 4 torch.Size([358, 120]) <class 'torch.nn.utils.rnn.PackedSequence'>
+
+        ht, _ = torch.nn.utils.rnn.pad_packed_sequence(ht, batch_first =True) #16, 33, 120 where 33 could be : 1-40
         # Sentence representation as the final hidden state of the model
-        representations = torch.zeros(batch_size, self.hidden_size).float()
+        representations = torch.zeros(batch_size, self.hidden_size).float() 
         for i in range(lengths.shape[ 0]):
             last = lengths[i] - 1 if lengths[i] <= max_length else max_length - 1
             representations[i] = ht[i, last, :]
-
-        logits = self.linear(representations)
+            
+        logits = self.linear(representations) #16, 120
         return logits

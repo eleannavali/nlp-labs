@@ -1,5 +1,5 @@
 import torch
-from torch import nn
+from torch import embedding, nn
 from config import  EMB_DIM, MAX_LENGTH
 
 class BaselineDNN(nn.Module):
@@ -126,58 +126,94 @@ class LSTM(nn.Module) :
         logits = self.linear(representations) #16, 120
         return logits
 
+class Attention_network(nn.Module) :
+    def __init__(self, output_size, embeddings, num_heads) -> None:
+        super(Attention_network, self).__init__()
 
-# LSTM CLASS
-class LSTMAttention(nn.Module) :
-    def __init__(self, output_size, embeddings, concat=False) -> None:
-        super(LSTM, self).__init__()
-
-        self.hidden_size = 120
-        self.num_layers = 1 
-        self.representation_size = self.hidden_size
         self.output_size = output_size
-        self.concat = concat
+        self.num_heads = num_heads 
+        self.key_dim = 20
 
         # Layers
         self.embeddings = nn.Embedding.from_pretrained(torch.tensor(embeddings), freeze=True)  # EX4
-        num_embeddings, emb_dim = embeddings.shape
-        self.lstm = nn.LSTM(input_size=emb_dim, hidden_size=self.hidden_size, num_layers=1, batch_first=True)
+        num_embeddings, emb_dim = embeddings.shape      
+        self.attention = nn.MultiheadAttention(embed_dim=emb_dim, num_heads=self.num_heads)
 
-        if self.concat==False :
-            self.linear = nn.Linear(self.representation_size, self.output_size)
-        else :
-            self.linear = nn.Linear(3*self.representation_size, self.output_size)
+        self.linear = nn.Linear(self.key_dim, output_size)
 
-        # self.attention = 
-
-    def forward(self, x, lengths) :
-        batch_size, max_length = x.shape
-        embeddings = self.embeddings(x) # 16, 40, 50
-
-        # Helps the lstm ignore the padded zeros
-        # len=4, X[0]:torch.Size([358, 50]), <class 'torch.nn.utils.rnn.PackedSequence'>
-        X = torch.nn.utils.rnn.pack_padded_sequence(embeddings, lengths, batch_first=True, enforce_sorted=False)
-
-        ht, _ = self.lstm(X) #ht lstm size: 4 torch.Size([358, 120]) <class 'torch.nn.utils.rnn.PackedSequence'>
-
-        ht, _ = torch.nn.utils.rnn.pad_packed_sequence(ht, batch_first =True) #16, 33, 120 where 33 could be : 1-40
-        # Sentence representation as the final hidden state of the model
-        representations = torch.zeros(batch_size, self.hidden_size).float() 
-        for i in range(lengths.shape[ 0]):
-            last = lengths[i] - 1 if lengths[i] <= max_length else max_length - 1
-            representations[i] = ht[i, last, :]
+    def forward(self, x) :
         
-        if self.concat==True : 
-            # mean of ht(for every word)
-            representations1 = torch.sum(ht, dim=1)
-            for i in range(lengths.shape[0]) :
-                representations1[i] = representations1[i] / lengths[i]
-            # max of ht in dim 1 (for every word)
-            representations2,_ = torch.max(ht, dim=1)
-            representations = torch.cat((representations,representations1, representations2), dim=1)  
+        embeddings = self.embeddings(x)
+        out = self.attention(embeddings)
+        out = self.linear(out)
 
-        
+        return out 
 
+class SelfAttention(nn.Module):
+    def __init__(self, attention_size, batch_first=False, non_linearity="tanh"):
+        super(SelfAttention, self).__init__()
 
-        logits = self.linear(representations) #16, 120
-        return logits
+        self.batch_first = batch_first
+        # Initialize a trainable Weight matrix
+        self.attention_weights = nn.parameter.Parameter(torch.FloatTensor(attention_size))
+        self.softmax = nn.Softmax(dim=-1)
+
+        if non_linearity == "relu":
+            self.non_linearity = nn.ReLU()
+        else:
+            self.non_linearity = nn.Tanh()
+
+        nn.init.uniform(self.attention_weights.data, -0.005, 0.005)
+
+    def get_mask(self, attentions, lengths):
+        """
+        Construct mask for padded itemsteps, based on lengths
+        """
+        max_len = max(lengths.data)
+        mask = torch.Variable(torch.ones(attentions.size())).detach()
+
+        if attentions.data.is_cuda:
+            mask = mask.cuda()
+
+        for i, l in enumerate(lengths.data):  # skip the first sentence
+            if l < max_len:
+                mask[i, l:] = 0
+        return mask
+
+    def forward(self, inputs, lengths):
+
+        ##################################################################
+        # STEP 1 - perform dot product
+        # of the attention vector and each hidden state
+        ##################################################################
+
+        # inputs is a 3D Tensor: batch, len, hidden_size
+        # scores is a 2D Tensor: batch, len
+        scores = self.non_linearity(inputs.matmul(self.attention_weights))
+        scores = self.softmax(scores)
+
+        ##################################################################
+        # Step 2 - Masking
+        ##################################################################
+
+        # construct a mask, based on the sentence lengths
+        mask = self.get_mask(scores, lengths)
+
+        # apply the mask - zero out masked timesteps
+        masked_scores = scores * mask
+
+        # re-normalize the masked scores
+        _sums = masked_scores.sum(-1, keepdim=True)  # sums per row
+        scores = masked_scores.div(_sums)  # divide by row sum
+
+        ##################################################################
+        # Step 3 - Weighted sum of hidden states, by the attention scores
+        ##################################################################
+
+        # multiply each hidden state with the attention weights
+        weighted = torch.mul(inputs, scores.unsqueeze(-1).expand_as(inputs))
+
+        # sum the hidden states
+        representations = weighted.sum(1).squeeze()
+
+        return representations, scores

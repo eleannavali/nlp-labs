@@ -58,8 +58,8 @@ class BaselineDNN(nn.Module):
             representations[i] = representations[i] / lengths[i]
 
         if self.concat==True :
-            representations2 = torch.max(embeddings, dim=1)
-            representations = torch.cat(representations, representations2, dim=1)
+            representations2,_ = torch.max(embeddings, dim=1)
+            representations = torch.cat((representations, representations2), dim=1)
     
             
 
@@ -106,6 +106,6 @@ class LSTM(nn.Module) :
         for i in range(lengths.shape[ 0]):
             last = lengths[i] - 1 if lengths[i] <= max_length else max_length - 1
             representations[i] = ht[i, last, :]
-            
+
         logits = self.linear(representations) #16, 120
         return logits

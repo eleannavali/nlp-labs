@@ -36,7 +36,8 @@ EMB_TRAINABLE = True
 BATCH_SIZE = 128
 EPOCHS = 50
 DATASET = "MR"  # options: "MR", "Semeval2017A"
-MODEL = "DNN" # or "LSTM"
+MODEL = "LSTM" # or "LSTM"
+CONCAT = True
 
 # if your computer has a CUDA compatible gpu use it, otherwise use the cpu
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -100,9 +101,9 @@ if DATASET=='MR':
     if MODEL=="DNN":
         model = BaselineDNN(output_size=2,  # EX8
                             embeddings=embeddings,
-                            trainable_emb=EMB_TRAINABLE,concat=True)
+                            trainable_emb=EMB_TRAINABLE,concat=CONCAT)
     else:
-        model = LSTM(output_size=2,embeddings=embeddings)
+        model = LSTM(output_size=2,embeddings=embeddings,concat=CONCAT)
 else:
     if MODEL=="DNN":
         model = BaselineDNN(output_size=3,  # EX8
@@ -169,7 +170,7 @@ for epoch in range(1, EPOCHS + 1):
     tr_rec.append(recall_train)
     val_rec.append(recall_test)
 
-plot_training_curves(tr_loss,tr_acc,val_loss,val_acc,DATASET,MODEL)
+plot_training_curves(tr_loss,tr_acc,val_loss,val_acc,DATASET,MODEL,CONCAT)
 print("acc total:",tr_acc)
 
 print(f"Best f1 score={max(tr_f1)} for epoch {np.argmax(tr_f1)} in training set.")

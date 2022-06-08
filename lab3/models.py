@@ -125,25 +125,26 @@ class LSTM(nn.Module) :
         logits = self.linear(representations) #16, 120
         return logits
 
-class Attention_network(nn.Module) :
-    def __init__(self, output_size, embeddings, num_heads) -> None:
-        super(Attention_network, self).__init__()
+class Attention_DNN(nn.Module) :
+    def __init__(self, output_size, embeddings) -> None:
+        super(Attention_DNN, self).__init__()
 
         self.output_size = output_size
-        self.num_heads = num_heads 
-        self.key_dim = 20
 
         # Layers
         self.embeddings = nn.Embedding.from_pretrained(torch.tensor(embeddings), freeze=True)  # EX4
-        num_embeddings, emb_dim = embeddings.shape      
-        self.attention = nn.MultiheadAttention(embed_dim=emb_dim, num_heads=self.num_heads)
+        num_embeddings, emb_dim = embeddings.shape   
+        self.representation_dim = emb_dim   
 
-        self.linear = nn.Linear(self.key_dim, output_size)
+        # attention 
+        self.attention = SelfAttention(emb_dim, batch_first=True, non_linearity='tanh' )
 
-    def forward(self, x) :
+        self.linear = nn.Linear(self.representation_dim, output_size)
+
+    def forward(self, x, lengths) :
         
         embeddings = self.embeddings(x)
-        out = self.attention(embeddings)
+        out, scores = self.attention(embeddings, lengths)
         out = self.linear(out)
 
         return out 
@@ -153,7 +154,7 @@ class SelfAttention(nn.Module):
         super(SelfAttention, self).__init__()
 
         self.batch_first = batch_first
-        self.attention_weights = Parameter(torch.FloatTensor(attention_size))
+        self.attention_weights = nn.parameter.Parameter(torch.FloatTensor(attention_size))
         self.softmax = nn.Softmax(dim=-1)
 
         if non_linearity == "relu":
@@ -168,7 +169,7 @@ class SelfAttention(nn.Module):
         Construct mask for padded itemsteps, based on lengths
         """
         max_len = max(lengths.data)
-        mask = torch.Variable(torch.ones(attentions.size())).detach()
+        mask = torch.autograd.Variable(torch.ones(attentions.size())).detach()
 
         if attentions.data.is_cuda:
             mask = mask.cuda()
@@ -209,9 +210,16 @@ class SelfAttention(nn.Module):
         ##################################################################
 
         # multiply each hidden state with the attention weights
-        weighted = torch.mul(inputs, scores.unsqueeze(-1).expand_as(inputs))
+        print('scores : ', scores.size(),scores.unsqueeze(-1).expand_as(inputs).size() )
+        print(scores.unsqueeze(-1).expand_as(inputs))
 
-        # sum the hidden states
+        # Element wize mult. Attention score is multiplied with each feature 
+        # batch X words X emb_dim
+        weighted = torch.mul(inputs, scores.unsqueeze(-1).expand_as(inputs))
+        print(weighted.size())
+        # sum the hidden states/words and get batch X emb_dim
         representations = weighted.sum(1).squeeze()
+        print(weighted.sum(1).size())
+        print(representations.size())
 
         return representations, scores

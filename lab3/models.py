@@ -11,7 +11,7 @@ class BaselineDNN(nn.Module):
        to the number of classes.ngth)
     """
 
-    def __init__(self, output_size, embeddings, trainable_emb=True) :
+    def __init__(self, output_size, embeddings, trainable_emb=True, concat=False) :
         """
 
         Args:
@@ -25,20 +25,17 @@ class BaselineDNN(nn.Module):
 
         # 1 - define the embedding layer
         self.embed_l = nn.Embedding.from_pretrained(torch.tensor(embeddings), freeze=trainable_emb)  # EX4
-        # 2 - initialize the weights of our Embedding layer
-        # from the pretrained word embeddings
-        # 3 - define if the embedding layer will be frozen or finetuned
-
+        self.concat = concat 
 
         # 4 - define a non-linear transformation of the representations
-        self.linear1 = nn.Linear(EMB_DIM, 60)
+        if self.concat == True :
+            self.linear1 = nn.Linear(2*EMB_DIM, 60)
+        else :
+            self.linear1 = nn.Linear(EMB_DIM, 60)
         self.relu = nn.ReLU()
+        # maps the representations to the classes
         self.linear2 = nn.Linear(60, output_size) # EX5
         
-
-        # 5 - define the final Linear layer which maps
-        # the representations to the classes
-        ...  # EX5
 
     def forward(self, x, lengths):
         """
@@ -54,14 +51,17 @@ class BaselineDNN(nn.Module):
         embeddings = self.embed_l(x) # EX6  batch, 40, 50
     
 
-        # 2 - construct a sentence representation out of the word embeddings
-        #representations =  torch.mean(embeddings, dim=1) # EX6  batch, 50
-
+        # Compute mean in axis 1 
         # sum and then divide by the real length of the sentence. 
         representations = torch.sum(embeddings, dim=1)
         for i in range(lengths.shape[0]) :
             representations[i] = representations[i] / lengths[i]
-        
+
+        if self.concat==True :
+            representations2 = torch.max(embeddings, dim=1)
+            representations = torch.cat(representations, representations2, dim=1)
+    
+            
 
         # 3 - transform the representations to new ones.
         representations = self.linear1(representations)
@@ -74,7 +74,6 @@ class BaselineDNN(nn.Module):
 
 
 # LSTM CLASS
-
 class LSTM(nn.Module) :
     def __init__(self, output_size, embeddings) -> None:
         super(LSTM, self).__init__()

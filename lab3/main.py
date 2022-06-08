@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader
 
 from config import EMB_PATH
 from dataloading import SentenceDataset
-from models import BaselineDNN,LSTM
+from models import BaselineDNN,LSTM,SelfAttention
 from training import train_dataset, eval_dataset
 from utils.load_datasets import load_MR, load_Semeval2017A
 from utils.load_embeddings import load_word_vectors
@@ -34,7 +34,7 @@ EMB_DIM = 50
 
 EMB_TRAINABLE = True
 BATCH_SIZE = 128
-EPOCHS = 50
+EPOCHS = 4
 DATASET = "MR"  # options: "MR", "Semeval2017A"
 MODEL = "LSTM" # or "LSTM"
 CONCAT = True
@@ -103,7 +103,8 @@ if DATASET=='MR':
                             embeddings=embeddings,
                             trainable_emb=EMB_TRAINABLE,concat=CONCAT)
     else:
-        model = LSTM(output_size=2,embeddings=embeddings,concat=CONCAT)
+        # model = LSTM(output_size=2,embeddings=embeddings,concat=CONCAT)
+        model = SelfAttention(attention_size=EMB_DIM)
 else:
     if MODEL=="DNN":
         model = BaselineDNN(output_size=3,  # EX8
@@ -116,10 +117,10 @@ else:
 model.to(DEVICE)
 print(model)
 
-# for x,y,k in train_loader:
-#     pred = model(x,k)
-#     print(pred[0],y[0])
-#     break
+for x,y,k in train_loader:
+    pred = model(x,k)
+    print(pred[0],y[0])
+    exit(0)
 
 # We optimize ONLY those parameters that are trainable (p.requires_grad==True)
 if DATASET=='MR':
@@ -171,7 +172,7 @@ for epoch in range(1, EPOCHS + 1):
     val_rec.append(recall_test)
 
 plot_training_curves(tr_loss,tr_acc,val_loss,val_acc,DATASET,MODEL,CONCAT)
-print("acc total:",tr_acc)
+# print("acc total:",tr_acc)
 
 print(f"Best f1 score={max(tr_f1)} for epoch {np.argmax(tr_f1)} in training set.")
 print(f"Best f1 score={max(val_f1)} for epoch {np.argmax(val_f1)} in test set")

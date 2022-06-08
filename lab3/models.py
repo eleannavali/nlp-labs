@@ -116,6 +116,8 @@ class LSTM(nn.Module) :
             representations1 = torch.sum(ht, dim=1)
             for i in range(lengths.shape[0]) :
                 representations1[i] = representations1[i] / lengths[i]
+                # if torch.sum(ht[0][0:lengths[i]])>0:
+                #     print("problem..:",torch.sum(ht[0][0:lengths[i]]))
             # max of ht in dim 1 (for every word)
             representations2,_ = torch.max(ht, dim=1)
             representations = torch.cat((representations,representations1, representations2), dim=1)  
@@ -150,7 +152,7 @@ class Attention_network(nn.Module) :
         return out 
 
 class SelfAttention(nn.Module):
-    def __init__(self, attention_size, batch_first=False, non_linearity="tanh"):
+    def __init__(self, attention_size, batch_first=True, non_linearity="tanh"):
         super(SelfAttention, self).__init__()
 
         self.batch_first = batch_first
@@ -170,7 +172,10 @@ class SelfAttention(nn.Module):
         Construct mask for padded itemsteps, based on lengths
         """
         max_len = max(lengths.data)
-        mask = torch.Variable(torch.ones(attentions.size())).detach()
+        # Create random Tensors to hold input and outputs, and wrap them in Variables.
+        # Setting requires_grad=False indicates that we do not need to compute gradients
+        # with respect to these Variables during the backward pass.
+        mask = torch.autograd.Variable(torch.ones(attentions.size())).detach()
 
         if attentions.data.is_cuda:
             mask = mask.cuda()
@@ -211,7 +216,9 @@ class SelfAttention(nn.Module):
         ##################################################################
 
         # multiply each hidden state with the attention weights
+        print("scores dim:",scores.size(),scores.unsqueeze(-1).expand_as(inputs).size())
         weighted = torch.mul(inputs, scores.unsqueeze(-1).expand_as(inputs))
+        print("weighted dim",weighted.size(),weighted.sum(1).size(),weighted.sum(1).squeeze().size())
 
         # sum the hidden states
         representations = weighted.sum(1).squeeze()

@@ -78,7 +78,8 @@ def eval_dataset(dataloader, model, loss_function, binary_classification=True):
     # disable regularization layers, such as Dropout
     model.eval()
     running_loss = 0.0
-    num_of_corrects = 0.0
+    num_of_corrects = 0
+    num_of_samples = 0
     running_f1 = 0.0
     running_recall = 0.0
 
@@ -117,6 +118,7 @@ def eval_dataset(dataloader, model, loss_function, binary_classification=True):
 
             # compute batch accuracy
             running_loss += loss.data.item()
+            num_of_samples += len(inputs)
             if binary_classification:
                 num_of_corrects += torch.sum(class_pred == torch.argmax(labels,dim=1))
                 running_f1 += f1_score(torch.argmax(labels,dim=1),class_pred,average='macro')
@@ -126,5 +128,6 @@ def eval_dataset(dataloader, model, loss_function, binary_classification=True):
                 num_of_corrects += torch.sum(class_pred == labels)
                 running_f1 += f1_score(labels,class_pred,average='macro')
                 running_recall += recall_score(labels,class_pred,average='macro')
+        # print("accuracy: ",num_of_corrects,num_of_samples,num_of_corrects.item()/num_of_samples)
 
-    return running_loss / index, (y_pred, y), num_of_corrects / (index*len(batch)), running_f1 / index , running_recall / index
+    return running_loss / index, (y_pred, y), num_of_corrects.item() / num_of_samples, running_f1 / index , running_recall / index

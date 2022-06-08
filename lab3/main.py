@@ -169,7 +169,8 @@ for epoch in range(1, EPOCHS + 1):
     tr_rec.append(recall_train)
     val_rec.append(recall_test)
 
-plot_training_curves(tr_loss,tr_acc,val_loss,val_acc,DATASET)
+plot_training_curves(tr_loss,tr_acc,val_loss,val_acc,DATASET,MODEL)
+print("acc total:",tr_acc)
 
 print(f"Best f1 score={max(tr_f1)} for epoch {np.argmax(tr_f1)} in training set.")
 print(f"Best f1 score={max(val_f1)} for epoch {np.argmax(val_f1)} in test set")

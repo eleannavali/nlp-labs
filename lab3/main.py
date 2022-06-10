@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader
 
 from config import EMB_PATH
 from dataloading import SentenceDataset
-from models import BaselineDNN,LSTM,SelfAttention
+from models import BaselineDNN,LSTM,Attention_DNN
 from training import train_dataset, eval_dataset
 from utils.load_datasets import load_MR, load_Semeval2017A
 from utils.load_embeddings import load_word_vectors
@@ -34,9 +34,9 @@ EMB_DIM = 50
 
 EMB_TRAINABLE = True
 BATCH_SIZE = 128
-EPOCHS = 4
+EPOCHS = 50
 DATASET = "MR"  # options: "MR", "Semeval2017A"
-MODEL = "LSTM" # or "LSTM"
+MODEL = "DNNAttention" # or "LSTM"
 CONCAT = True
 
 # if your computer has a CUDA compatible gpu use it, otherwise use the cpu
@@ -104,7 +104,7 @@ if DATASET=='MR':
                             trainable_emb=EMB_TRAINABLE,concat=CONCAT)
     else:
         # model = LSTM(output_size=2,embeddings=embeddings,concat=CONCAT)
-        model = SelfAttention(attention_size=EMB_DIM)
+        model = Attention_DNN(output_size=2,embeddings=embeddings)
 else:
     if MODEL=="DNN":
         model = BaselineDNN(output_size=3,  # EX8
@@ -117,10 +117,10 @@ else:
 model.to(DEVICE)
 print(model)
 
-for x,y,k in train_loader:
-    pred = model(x,k)
-    print(pred[0],y[0])
-    exit(0)
+# for x,y,k in train_loader:
+#     pred = model(x,k)
+#     print(pred[0],y[0])
+#     exit(0)
 
 # We optimize ONLY those parameters that are trainable (p.requires_grad==True)
 if DATASET=='MR':

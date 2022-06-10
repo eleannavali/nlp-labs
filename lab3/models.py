@@ -75,19 +75,24 @@ class BaselineDNN(nn.Module):
 
 # LSTM CLASS
 class LSTM(nn.Module) :
-    def __init__(self, output_size, embeddings, concat=False) -> None:
+    def __init__(self, output_size, embeddings, bidirectional=False, concat=False) -> None:
         super(LSTM, self).__init__()
 
         self.hidden_size = 120
         self.num_layers = 1 
-        self.representation_size = self.hidden_size
         self.output_size = output_size
+        self.bidirectional = bidirectional
         self.concat = concat
+        # A bidirectional LSTM has double outputs. 
+        self.representation_size = self.hidden_size if not(bidirectional) else 2*self.hidden_size
 
         # Layers
         self.embeddings = nn.Embedding.from_pretrained(torch.tensor(embeddings), freeze=True)  # EX4
         num_embeddings, emb_dim = embeddings.shape
-        self.lstm = nn.LSTM(input_size=emb_dim, hidden_size=self.hidden_size, num_layers=1, batch_first=True)
+
+        self.lstm = nn.LSTM(input_size=emb_dim, hidden_size=self.hidden_size,
+                             bidirectional=self.bidirectional,
+                             num_layers=1, batch_first=True)
 
         if self.concat==False :
             self.linear = nn.Linear(self.representation_size, self.output_size)
@@ -100,13 +105,13 @@ class LSTM(nn.Module) :
 
         # Helps the lstm ignore the padded zeros
         # len=4, X[0]:torch.Size([358, 50]), <class 'torch.nn.utils.rnn.PackedSequence'>
-        X = torch.nn.utils.rnn.pack_padded_sequence(embeddings, lengths, batch_first=True, enforce_sorted=False)
+        X = torch.nn.utils.rnn.pack_padded_sequence(embeddings, torch.squeeze(lengths), batch_first=True, enforce_sorted=False)
 
         ht, _ = self.lstm(X) #ht lstm size: 4 torch.Size([358, 120]) <class 'torch.nn.utils.rnn.PackedSequence'>
 
         ht, _ = torch.nn.utils.rnn.pad_packed_sequence(ht, batch_first =True) #16, 33, 120 where 33 could be : 1-40
         # Sentence representation as the final hidden state of the model
-        representations = torch.zeros(batch_size, self.hidden_size).float() 
+        representations = torch.zeros(batch_size, self.representation_size).float() 
         for i in range(lengths.shape[ 0]):
             last = lengths[i] - 1 if lengths[i] <= max_length else max_length - 1
             representations[i] = ht[i, last, :]
@@ -151,6 +156,46 @@ class Attention_DNN(nn.Module) :
         out = self.linear(out)
 
         return out 
+
+
+class LSTM_Attention(nn.Module) :
+    def __init__(self, output_size, embeddings, bidirectional=False) -> None:
+        super(LSTM_Attention, self).__init__()
+
+        self.hidden_size = 120
+        self.num_layers = 1 
+        self.output_size = output_size
+        self.bidirectional = bidirectional
+        # A bidirectional LSTM has double outputs. 
+        self.representation_size = self.hidden_size if not(bidirectional) else 2*self.hidden_size
+
+        # Layers
+        self.embeddings = nn.Embedding.from_pretrained(torch.tensor(embeddings), freeze=True)  # EX4
+        num_embeddings, emb_dim = embeddings.shape
+        self.lstm = nn.LSTM(input_size=emb_dim, hidden_size=self.hidden_size,
+                             bidirectional=self.bidirectional,
+                             num_layers=1, batch_first=True)
+
+        # attention layer
+        self.attention = SelfAttention(self.representation_size, batch_first=True, non_linearity='tanh' )
+        self.linear = nn.Linear(self.representation_size, self.output_size)
+
+    def forward(self, x, lengths) :
+        batch_size, max_length = x.shape
+        embeddings = self.embeddings(x) # batch X sequence X emb_dim
+        # Helps the lstm ignore the padded zeros
+        # len=4, X[0]:torch.Size([358, 50]), <class 'torch.nn.utils.rnn.PackedSequence'>
+        X = torch.nn.utils.rnn.pack_padded_sequence(embeddings, torch.squeeze(lengths), batch_first=True, enforce_sorted=False)
+
+        ht, _ = self.lstm(X) #ht lstm size: 4 torch.Size([358, 120]) <class 'torch.nn.utils.rnn.PackedSequence'>
+
+        ht, _ = torch.nn.utils.rnn.pad_packed_sequence(ht, batch_first =True) #16, 33, 120 where 33 could be : 1-40
+        representations = ht
+
+        weighted_representations, scores = self.attention(representations, lengths)
+        logits = self.linear(weighted_representations) #16, 120
+        return logits
+
 
 class SelfAttention(nn.Module):
     def __init__(self, attention_size, batch_first=True, non_linearity="tanh"):
@@ -216,16 +261,16 @@ class SelfAttention(nn.Module):
         ##################################################################
 
         # multiply each hidden state with the attention weights
-        # print('scores : ', scores.size(),scores.unsqueeze(-1).expand_as(inputs).size() )
-        # print(scores.unsqueeze(-1).expand_as(inputs))
+        #print('scores : ', scores.size(),scores.unsqueeze(-1).expand_as(inputs).size() )
+        #print(scores.unsqueeze(-1).expand_as(inputs))
 
         # Element wize mult. Attention score is multiplied with each feature 
         # batch X words X emb_dim
         weighted = torch.mul(inputs, scores.unsqueeze(-1).expand_as(inputs))
-        # print(weighted.size())
+        #print(weighted.size())
         # sum the hidden states/words and get batch X emb_dim
         representations = weighted.sum(1).squeeze()
-        # print(weighted.sum(1).size())
-        # print(representations.size())
+        #print(weighted.sum(1).size())
+       # print(representations.size())
 
         return representations, scores

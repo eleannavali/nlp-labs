@@ -1,0 +1,4 @@
+Best f1 score=0.7035280369164575 for epoch 49 in training set.
+Best f1 score=0.7367874368065661 for epoch 43 in test set.
+Best recall score=0.7076782459977884 for epoch 49 in training set.
+Best recall score=0.7384159175207204 for epoch 43 in test set.

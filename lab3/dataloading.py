@@ -42,7 +42,7 @@ class SentenceDataset(Dataset):
         # EX2
         self.encoded_X=[]
         self.tokenized_X = [word_tokenize(data_point) for data_point in X]
-        print("10 first training examples:",self.tokenized_X[0:10])
+        # print("10 first training examples:",self.tokenized_X[0:10])
 
         # length_tmp=[]
         for review in self.tokenized_X:

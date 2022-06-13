@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt 
 
-def plot_training_curves(tr_loss, tr_acc, val_loss, val_acc,name,model,concat):
+def plot_training_curves(tr_loss, tr_acc, val_loss, val_acc,name,model,concat,bidirectional):
     '''Plot training learning curves for both train and validation.'''
 
     #Range for the X axis.
@@ -14,7 +14,7 @@ def plot_training_curves(tr_loss, tr_acc, val_loss, val_acc,name,model,concat):
     plt.xlabel("Epochs") #title for x axis
     plt.ylabel("Loss")   #title for y axis
     plt.legend(fontsize=11)
-    plt.savefig('diagrams/loss_'+name+'_'+model+"_concat="+str(concat)+'.png')
+    plt.savefig('diagrams/loss_'+name+'_'+model+"_concat="+str(concat)+"_bidirectional="+str(bidirectional)+'.png')
 
     #Plotting Accuracy figures.
     plt.figure(figsize=(12,10)) #figure size h,w in inches
@@ -23,7 +23,7 @@ def plot_training_curves(tr_loss, tr_acc, val_loss, val_acc,name,model,concat):
     plt.xlabel("Epochs")   #title for x axis
     plt.ylabel("Accuracy") #title for y axis
     plt.legend(fontsize=11)
-    plt.savefig('diagrams/accuracy_'+name+'_'+model+"_concat="+str(concat)+'.png')
+    plt.savefig('diagrams/accuracy_'+name+'_'+model+"_concat="+str(concat)+"_bidirectional="+str(bidirectional)+'.png')
 
 # if __name__ == "__main__":
 #     a = [1,2,3,4]

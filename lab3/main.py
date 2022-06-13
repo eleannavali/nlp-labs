@@ -38,6 +38,7 @@ EPOCHS = 50
 DATASET = "MR"  # options: "MR", "Semeval2017A"
 MODEL = "DNNAttention" # or "LSTM"
 CONCAT = True
+BIDIRECTIONAL = True
 
 # if your computer has a CUDA compatible gpu use it, otherwise use the cpu
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -103,8 +104,8 @@ if DATASET=='MR':
                             embeddings=embeddings,
                             trainable_emb=EMB_TRAINABLE,concat=CONCAT)
     else:
-        # model = LSTM(output_size=2,embeddings=embeddings,concat=CONCAT)
-        model = Attention_DNN(output_size=2,embeddings=embeddings)
+        model = LSTM(output_size=2,embeddings=embeddings,concat=CONCAT,bidirectional=BIDIRECTIONAL)
+        # model = Attention_DNN(output_size=2,embeddings=embeddings)
 else:
     if MODEL=="DNN":
         model = BaselineDNN(output_size=3,  # EX8
@@ -171,7 +172,7 @@ for epoch in range(1, EPOCHS + 1):
     tr_rec.append(recall_train)
     val_rec.append(recall_test)
 
-plot_training_curves(tr_loss,tr_acc,val_loss,val_acc,DATASET,MODEL,CONCAT)
+plot_training_curves(tr_loss,tr_acc,val_loss,val_acc,DATASET,MODEL,CONCAT,BIDIRECTIONAL)
 # print("acc total:",tr_acc)
 
 print(f"Best f1 score={max(tr_f1)} for epoch {np.argmax(tr_f1)} in training set.")

@@ -51,7 +51,8 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("loading word embeddings...")
 word2idx, idx2word, embeddings = load_word_vectors(EMBEDDINGS, EMB_DIM)
 
-for DATASET in ["MR", "Semeval2017A"]:
+# MODE : Train all models 
+for DATASET in [ "MR","Semeval2017A"]: 
     for MODEL in ["DNN", "LSTM", "DNNAttention", "LSTMAttention"]:
         for CONCAT in [True,False]:
             if MODEL=="DNNAttention" or MODEL=="LSTMAttention":
@@ -65,6 +66,28 @@ for DATASET in ["MR", "Semeval2017A"]:
                         break
                     else:
                         BIDIRECTIONAL='None'
+
+    ## MODE : Save the best attention model for each dataset
+    # for MODEL in ["DNNAttention", "LSTMAttention"]:
+    #             if DATASET=='MR':
+    #                 if MODEL=='DNNAttention':
+    #                     EPOCHS=47
+    #                     CONCAT = 'None'
+    #                     BIDIRECTIONAL = 'None'
+    #                 else:
+    #                     EPOCHS=45
+    #                     CONCAT = 'None'
+    #                     BIDIRECTIONAL = True
+    #             else:
+    #                 if MODEL=='DNNAttention':
+    #                     EPOCHS=43
+    #                     CONCAT = 'None'
+    #                     BIDIRECTIONAL = 'None'
+    #                 else:
+    #                     EPOCHS=42
+    #                     CONCAT = "None"
+    #                     BIDIRECTIONAL = True
+
             
 
                 ## main code ...
@@ -168,6 +191,7 @@ for DATASET in ["MR", "Semeval2017A"]:
                 val_f1 = []
                 tr_rec = []
                 val_rec = []
+                min_loss = 10000
                 for epoch in range(1, EPOCHS + 1):
                     # train the model for one epoch
                     train_dataset(epoch, train_loader, model, criterion, optimizer)
@@ -182,30 +206,41 @@ for DATASET in ["MR", "Semeval2017A"]:
 
                         test_loss,(y_pred_test, y_test),  accuracy_test, f1_test, recall_test = eval_dataset(test_loader,model,criterion,binary_classification=False)
                     
-                    with open('./results/out_'+DATASET+'_'+MODEL+"_batch_size="+str(BATCH_SIZE)+"_epochs="+str(EPOCHS)+"_concat="+str(CONCAT)+"_bidirectional="+str(BIDIRECTIONAL)+'.txt', "a") as f:
-                        f.write("For epoch " +str(epoch) +":\n")
-                        f.write("F1 score for TRAINING: "+str(f1_train)+"\n")
-                        f.write("F1 score for TEST: "+str(f1_test)+"\n")
-                        f.write("Recall for TRAINING: "+ str(recall_train)+"\n")
-                        f.write("Recall for TEST: "+ str(recall_test)+"\n")
-                        f.close()
+                    # with open('./results/out_'+DATASET+'_'+MODEL+"_batch_size="+str(BATCH_SIZE)+"_epochs="+str(EPOCHS)+"_concat="+str(CONCAT)+"_bidirectional="+str(BIDIRECTIONAL)+'.txt', "a") as f:
+                    #     f.write("For epoch " +str(epoch) +":\n")
+                    #     f.write("F1 score for TRAINING: "+str(f1_train)+"\n")
+                    #     f.write("F1 score for TEST: "+str(f1_test)+"\n")
+                    #     f.write("Recall for TRAINING: "+ str(recall_train)+"\n")
+                    #     f.write("Recall for TEST: "+ str(recall_test)+"\n")
+                    #     f.close()
                     
-                    tr_loss.append(train_loss)
-                    val_loss.append(test_loss)
-                    tr_acc.append(accuracy_train)
-                    val_acc.append(accuracy_test)
-                    tr_f1.append(f1_train)
-                    val_f1.append(f1_test)
-                    tr_rec.append(recall_train)
-                    val_rec.append(recall_test)
+                    # tr_loss.append(train_loss)
+                    # val_loss.append(test_loss)
+                    # tr_acc.append(accuracy_train)
+                    # val_acc.append(accuracy_test)
+                    # tr_f1.append(f1_train)
+                    # val_f1.append(f1_test)
+                    # tr_rec.append(recall_train)
+                    # val_rec.append(recall_test)
 
-                plot_training_curves(tr_loss,tr_acc,val_loss,val_acc,DATASET,MODEL,BATCH_SIZE, EPOCHS,CONCAT,BIDIRECTIONAL)
+                # plot_training_curves(tr_loss,tr_acc,val_loss,val_acc,DATASET,MODEL,BATCH_SIZE, EPOCHS,CONCAT,BIDIRECTIONAL)
                 # print("acc total:",tr_acc)
 
-                with open('./results/best_out_'+DATASET+'_'+MODEL+"_batch_size="+str(BATCH_SIZE)+"_epochs="+str(EPOCHS)+"_concat="+str(CONCAT)+"_bidirectional="+str(BIDIRECTIONAL)+'.txt', "w") as f:
-                    f.write("Best f1 score="+str(max(tr_f1))+" for epoch "+str(np.argmax(tr_f1))+" in training set.\n")
-                    f.write("Best f1 score="+str(max(val_f1))+" for epoch "+str(np.argmax(val_f1))+" in test set.\n")
+                # with open('./results/best_out_'+DATASET+'_'+MODEL+"_batch_size="+str(BATCH_SIZE)+"_epochs="+str(EPOCHS)+"_concat="+str(CONCAT)+"_bidirectional="+str(BIDIRECTIONAL)+'.txt', "w") as f:
+                #     f.write("Best f1 score="+str(max(tr_f1))+" for epoch "+str(np.argmax(tr_f1))+" in training set.\n")
+                #     f.write("Best f1 score="+str(max(val_f1))+" for epoch "+str(np.argmax(val_f1))+" in test set.\n")
 
-                    f.write("Best recall score="+str(max(tr_rec))+" for epoch "+str(np.argmax(tr_rec))+" in training set.\n")
-                    f.write("Best recall score="+str(max(val_rec))+" for epoch "+str(np.argmax(val_rec))+" in test set.\n")
-                    f.close()
+                #     f.write("Best recall score="+str(max(tr_rec))+" for epoch "+str(np.argmax(tr_rec))+" in training set.\n")
+                #     f.write("Best recall score="+str(max(val_rec))+" for epoch "+str(np.argmax(val_rec))+" in test set.\n")
+                #     f.close()
+
+            
+                    # We chose the best model for each dataset from the diagrams of the training phase
+                    if min_loss>test_loss:
+                        min_loss=test_loss
+                        torch.save({
+                        'epoch': epoch,
+                        'model_state_dict': model.state_dict(),
+                        'optimizer_state_dict': optimizer.state_dict(),
+                        'loss': test_loss,
+                        }, './best_models/'+DATASET+'_'+MODEL+'_model.pt')

@@ -206,33 +206,33 @@ for DATASET in [ "MR","Semeval2017A"]:
 
                         test_loss,(y_pred_test, y_test),  accuracy_test, f1_test, recall_test = eval_dataset(test_loader,model,criterion,binary_classification=False)
                     
-                    # with open('./results/out_'+DATASET+'_'+MODEL+"_batch_size="+str(BATCH_SIZE)+"_epochs="+str(EPOCHS)+"_concat="+str(CONCAT)+"_bidirectional="+str(BIDIRECTIONAL)+'.txt', "a") as f:
-                    #     f.write("For epoch " +str(epoch) +":\n")
-                    #     f.write("F1 score for TRAINING: "+str(f1_train)+"\n")
-                    #     f.write("F1 score for TEST: "+str(f1_test)+"\n")
-                    #     f.write("Recall for TRAINING: "+ str(recall_train)+"\n")
-                    #     f.write("Recall for TEST: "+ str(recall_test)+"\n")
-                    #     f.close()
+                    with open('./results/out_'+DATASET+'_'+MODEL+"_batch_size="+str(BATCH_SIZE)+"_epochs="+str(EPOCHS)+"_concat="+str(CONCAT)+"_bidirectional="+str(BIDIRECTIONAL)+'.txt', "a") as f:
+                        f.write("For epoch " +str(epoch) +":\n")
+                        f.write("F1 score for TRAINING: "+str(f1_train)+"\n")
+                        f.write("F1 score for TEST: "+str(f1_test)+"\n")
+                        f.write("Recall for TRAINING: "+ str(recall_train)+"\n")
+                        f.write("Recall for TEST: "+ str(recall_test)+"\n")
+                        f.close()
                     
-                    # tr_loss.append(train_loss)
-                    # val_loss.append(test_loss)
-                    # tr_acc.append(accuracy_train)
-                    # val_acc.append(accuracy_test)
-                    # tr_f1.append(f1_train)
-                    # val_f1.append(f1_test)
-                    # tr_rec.append(recall_train)
-                    # val_rec.append(recall_test)
+                    tr_loss.append(train_loss)
+                    val_loss.append(test_loss)
+                    tr_acc.append(accuracy_train)
+                    val_acc.append(accuracy_test)
+                    tr_f1.append(f1_train)
+                    val_f1.append(f1_test)
+                    tr_rec.append(recall_train)
+                    val_rec.append(recall_test)
 
-                # plot_training_curves(tr_loss,tr_acc,val_loss,val_acc,DATASET,MODEL,BATCH_SIZE, EPOCHS,CONCAT,BIDIRECTIONAL)
-                # print("acc total:",tr_acc)
+                plot_training_curves(tr_loss,tr_acc,val_loss,val_acc,DATASET,MODEL,BATCH_SIZE, EPOCHS,CONCAT,BIDIRECTIONAL)
+                print("acc total:",tr_acc)
 
-                # with open('./results/best_out_'+DATASET+'_'+MODEL+"_batch_size="+str(BATCH_SIZE)+"_epochs="+str(EPOCHS)+"_concat="+str(CONCAT)+"_bidirectional="+str(BIDIRECTIONAL)+'.txt', "w") as f:
-                #     f.write("Best f1 score="+str(max(tr_f1))+" for epoch "+str(np.argmax(tr_f1))+" in training set.\n")
-                #     f.write("Best f1 score="+str(max(val_f1))+" for epoch "+str(np.argmax(val_f1))+" in test set.\n")
+                with open('./results/best_out_'+DATASET+'_'+MODEL+"_batch_size="+str(BATCH_SIZE)+"_epochs="+str(EPOCHS)+"_concat="+str(CONCAT)+"_bidirectional="+str(BIDIRECTIONAL)+'.txt', "w") as f:
+                    f.write("Best f1 score="+str(max(tr_f1))+" for epoch "+str(np.argmax(tr_f1))+" in training set.\n")
+                    f.write("Best f1 score="+str(max(val_f1))+" for epoch "+str(np.argmax(val_f1))+" in test set.\n")
 
-                #     f.write("Best recall score="+str(max(tr_rec))+" for epoch "+str(np.argmax(tr_rec))+" in training set.\n")
-                #     f.write("Best recall score="+str(max(val_rec))+" for epoch "+str(np.argmax(val_rec))+" in test set.\n")
-                #     f.close()
+                    f.write("Best recall score="+str(max(tr_rec))+" for epoch "+str(np.argmax(tr_rec))+" in training set.\n")
+                    f.write("Best recall score="+str(max(val_rec))+" for epoch "+str(np.argmax(val_rec))+" in test set.\n")
+                    f.close()
 
             
                     # We chose the best model for each dataset from the diagrams of the training phase

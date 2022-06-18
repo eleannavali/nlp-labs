@@ -155,7 +155,7 @@ class Attention_DNN(nn.Module) :
         out, scores = self.attention(embeddings, lengths)
         out = self.linear(out)
 
-        return out 
+        return out , scores
 
 
 class LSTM_Attention(nn.Module) :
@@ -194,7 +194,7 @@ class LSTM_Attention(nn.Module) :
 
         weighted_representations, scores = self.attention(representations, lengths)
         logits = self.linear(weighted_representations) #16, 120
-        return logits
+        return logits , scores
 
 
 class SelfAttention(nn.Module):

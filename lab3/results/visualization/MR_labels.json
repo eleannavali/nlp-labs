@@ -1,0 +1,10 @@
+{
+    "0": {
+      "name": "-",
+      "desc": "negative sentiment"
+    },
+    "1": {
+      "name": "+",
+      "desc": "positive sentiment"
+    }
+}
